@@ -1,0 +1,13 @@
+{% load forms %}
+
+<div class="space-y-4">
+    {% for err in form.non_field_errors %}
+        <div class="text-red-600 text-sm">{{ err }}</div>
+    {% endfor %}
+
+    {% for field in form.visible_fields %}
+        {% render_field field %}
+    {% endfor %}
+</div>
+
+{% for field in form.hidden_fields %}{{ field }}{% endfor %}

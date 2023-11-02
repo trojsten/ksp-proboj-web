@@ -1,0 +1,15 @@
+{% load widget_tweaks %}
+<div>
+    <label for="{{ field.id_for_label }}" class="block text-sm font-semibold leading-6 text-gray-900">
+        {{ field.label }}
+        {% if field.field.required %}<span class="text-red-600">*</span>{% endif %}
+    </label>
+    {% render_field field class+="input mt-1" %}
+
+    {% if field.help_text %}
+        <div class="mt-1 text-sm text-gray-400">{{ field.help_text }}</div>
+    {% endif %}
+    {% if field.errors %}
+        <div class="mt-1 text-sm text-red-600">{{ field.errors|first }}</div>
+    {% endif %}
+</div>

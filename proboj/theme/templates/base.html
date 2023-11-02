@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="sk">
+	<head>
+        <title>{% block title %}- KSP Proboj{% endblock %}</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="{% static "app.css" %}">
+	</head>
+	<body>
+        {% block body %}{% endblock %}
+	</body>
+</html>
+
