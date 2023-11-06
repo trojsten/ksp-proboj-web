@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}Proboj{% endblock %}
+
+{% block content %}
+    <h2 class="font-semibold text-3xl mb-4">Zoznam hier</h2>
+
+    <div class="border rounded-md overflow-hidden">
+        {% for game in game_list %}
+            <a href="{% url "game_detail" pk=game.id %}" class="px-2.5 py-1.5 block hover:bg-gray-100">
+                {{ game }}
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}

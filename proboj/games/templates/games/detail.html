@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% load markdown %}
+
+{% block title %}{{ game.name }} {{ block.super }}{% endblock %}
+
+{% block content %}
+    <div class="prose prose-green mx-auto">
+        {{ game.rules | markdown }}
+    </div>
+{% endblock %}

@@ -20,6 +20,9 @@ INSTALLED_APPS = [
     #
     "proboj.theme",
     "proboj.users",
+    "proboj.games",
+    "proboj.bots",
+    "proboj.matches",
     #
     "widget_tweaks",
 ]
@@ -82,3 +85,18 @@ STATIC_URL = "static/"
 STATIC_PATH = BASE_DIR / "static"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "private": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": BASE_DIR / "private",
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}

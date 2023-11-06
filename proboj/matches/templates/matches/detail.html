@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}Zápas #{{ match.id }} {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1 class="font-semibold text-3xl mb-4">Zápas #{{ match.id }}</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+            <h2 class="font-semibold text-xl mb-4">Skóre</h2>
+
+            <table class="w-full text-sm">
+                <thead class="bg-green-100 text-green-800 border-green-800 border-b">
+                    <tr>
+                        <th class="p-2 text-left">#</th>
+                        <th class="p-2 text-left">Hráč</th>
+                        <th class="p-2 text-right">Body</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-green-800/30">
+                    {% for bot in match.matchbot_set.all %}
+                    <tr class="{% cycle "" "bg-green-50" %} group">
+                        <td class="p-2">{% ifchanged bot.score %}{{ forloop.counter }}{% endifchanged %}</td>
+                        <td class="p-2 w-full">{{ bot.bot_version.bot }}</td>
+                        <td class="p-2 text-right tabular-nums">{{ bot.score }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h2 class="font-semibold text-xl mb-4">Záznam</h2>
+
+            <div class="mb-6 flex gap-1 flex-wrap">
+                <a href="#" class="btn">Prehrať</a>
+                <a href="#" class="btn">Stiahnúť</a>
+            </div>
+
+            <h2 class="font-semibold text-xl mb-4">Logy</h2>
+
+            <div class="text-sm">TODO</div>
+        </div>
+    </div>
+{% endblock %}

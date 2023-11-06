@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}Zoznam odohraných zápasov {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1 class="font-semibold text-3xl mb-4">Odohrané zápasy</h1>
+
+    <table class="w-full text-sm">
+        <thead class="bg-green-100 text-green-800 border-green-800 border-b">
+            <tr>
+                <th class="p-2 text-left">#</th>
+                <th class="p-2 text-left">Stav</th>
+                <th class="p-2 text-left">Konfigurácia</th>
+                <th class="p-2 text-left">Body</th>
+                <th class="p-2"></th>
+            </tr>
+        </thead>
+
+        <tbody class="divide-y divide-green-800/30">
+            {% for match in match_list %}
+            <tr class="{% cycle "" "bg-green-50" %} group">
+                <td class="p-2 tabular-nums">{{ match.id }}</td>
+                <td class="p-2">
+                    {% if match.is_finished %}
+                    <div class="bg-green-600 rounded text-white text-xs font-bold px-1.5 py-0.5 text-center">Skončená</div>
+                    {% else %}
+                    <div class="bg-amber-600 rounded text-white text-xs font-bold px-1.5 py-0.5 text-center">Naplánovaná</div>
+                    {% endif %}
+                </td>
+                <td class="p-2 whitespace-nowrap">{{ match.configuration }}</td>
+                <td class="p-2 w-full">
+                    {% for mbot in match.matchbot_set.all %}
+                    	{{ mbot.bot_version.bot }}: {{ mbot.score }}{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                </td>
+                <td class="p-2 whitespace-nowrap text-xs opacity-40 group-hover:opacity-100">
+                    <a href="#" class="underline text-green-600 hover:text-green-700">Prehrať</a> &middot;
+                    <a href="#" class="underline text-green-600 hover:text-green-700">Stiahnúť</a> &middot;
+                    <a href="{% url "match_detail" game=game.id pk=match.id %}" class="underline text-green-600 hover:text-green-700">Detail</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

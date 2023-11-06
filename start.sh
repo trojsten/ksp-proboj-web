@@ -6,6 +6,8 @@ mode="${1:-prod}"
 #python manage.py wait_for_database
 python manage.py migrate
 
+pygmentize -S monokai -f html -a .codehilite > /app/proboj/theme/static/code.css
+
 if [ "$mode" = "dev" ]; then
 	exec python manage.py runserver 0.0.0.0:8000
 else

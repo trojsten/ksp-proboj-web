@@ -21,7 +21,7 @@ ENV POETRY_VIRTUALENVS_CREATE 0
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt update \
     && apt -y upgrade \
-    && apt -y install nodejs npm \
+#    && apt -y install nodejs npm \
     && apt -y clean \
     && rm -rf /var/lib/apt/lists/*
 

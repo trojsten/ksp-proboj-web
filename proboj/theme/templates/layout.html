@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <div class="mx-auto w-full p-8 max-w-5xl">
+        <div class="flex items-center md:justify-between pb-8 mb-6 border-b border-green-800">
+            <a href="{% url "home" %}" class="text-green-600">
+                <div class="font-bold text-5xl">Proboj</div>
+                <div class="text-sm">Programátorský boj</div>
+            </a>
+
+            <div class="flex items-center gap-2">
+                {% if game %}
+                    <a href="{% url "match_list" game=game.id %}" class="hover:bg-green-100 text-green-800 px-2.5 py-1.5 rounded-md">Zápasy</a>
+                {% endif %}
+                <a href="#" class="hover:bg-green-100 text-green-800 px-2.5 py-1.5 rounded-md">adasda</a>
+            </div>
+        </div>
+
+        {% block content %}{% endblock %}
+    </div>
+{% endblock %}
