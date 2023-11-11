@@ -1,0 +1,17 @@
+# Podman configuration
+podman:
+  # Socket URL
+  url: unix:///run/user/1000/podman/podman.sock
+
+# Celery configuration
+celery:
+  # Broker URL
+  broker: redis://localhost
+  
+  # Other Celery options can be set here.
+  # https://docs.celeryq.dev/en/stable/userguide/configuration.html#configuration
+
+# Compilation images (language -> image name)
+images:
+  # See compiler-cpp-image for example of such image.
+  cpp: localhost/cmp:latest
