@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% load forms %}
+
+{% block title %}Nahranie verzie {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1 class="font-semibold text-3xl mb-4">Nahranie verzie</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% render_form form %}
+
+        <button type="submit" class="btn mt-6">Nahrať</button>
+    </form>
+{% endblock %}

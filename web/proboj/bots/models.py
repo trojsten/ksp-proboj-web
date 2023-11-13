@@ -3,9 +3,10 @@ import secrets
 
 from celery import current_app
 from django.conf import settings
-from django.core.validators import validate_slug
+from django.core.validators import FileExtensionValidator, validate_slug
 from django.db import models
 from django.db.models import UniqueConstraint
+from django.urls import reverse
 
 
 def _bot_version_path(instance: "BotVersion", filename, destname):
@@ -48,11 +49,12 @@ class BotVersion(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     secret = models.CharField(max_length=32, default=bot_secret)
 
-    is_enabled = models.BooleanField(default=False)
-    is_latest = models.BooleanField(default=False)
+    is_enabled = models.BooleanField(default=True)
 
     language = models.CharField(choices=Language.choices)
-    sources = models.FileField(upload_to=bot_version_sources, blank=True, null=True)
+    sources = models.FileField(
+        upload_to=bot_version_sources, validators=[FileExtensionValidator(["zip"])]
+    )
     compiled = models.FileField(upload_to=bot_version_compiled, blank=True, null=True)
     compile_log = models.TextField(blank=True)
 
@@ -77,9 +79,12 @@ class BotVersion(models.Model):
             "compiler.compile_player",
             queue="compile",
             kwargs={
-                "source_url": self.sources.url,
-                "language": self.language.value,
-                "report_url": "",
+                "source_url": settings.BASE_URL + self.sources.url,
+                "language": self.language,
+                "report_url": settings.BASE_URL
+                + reverse(
+                    "bot_compile", kwargs={"bot": self.bot_id, "secret": self.secret}
+                ),
             },
         )
 
@@ -88,5 +93,5 @@ class BotVersion(models.Model):
             last_version = (
                 BotVersion.objects.filter(bot=self.bot).order_by("-number").first()
             )
-            self.number = last_version.number if last_version else 1
+            self.number = last_version.number + 1 if last_version else 1
         return super().save(**kwargs)

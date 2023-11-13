@@ -12,13 +12,21 @@
     {% for version in versions %}
         <tr class="{% cycle "" "bg-green-50" %} group">
             <td class="p-2 tabular-nums">{{ version.number }}</td>
-            <td class="p-2 whitespace-nowrap">{{ version.created_at }}</td>
-            <td class="p-2">
-                <div class="bg-green-600 rounded text-white text-xs font-bold px-1.5 py-0.5 text-center">TODO</div>
+            <td class="p-2 whitespace-nowrap">{{ version.created_at|date:"d.m.Y H:i" }}</td>
+            <td class="p-2 whitespace-nowrap">
+                {% if version.compiled %}
+                <div class="bg-green-600 rounded text-white text-xs font-bold px-1.5 py-0.5 text-center">Pripravená</div>
+                {% elif version.compile_log %}
+                <div class="bg-red-600 rounded text-white text-xs font-bold px-1.5 py-0.5 text-center">Chyba kompilácie</div>
+                {% else %}
+                <div class="bg-gray-600 rounded text-white text-xs font-bold px-1.5 py-0.5 text-center">Čaká na kompiláciu</div>
+                {% endif %}
             </td>
-            <td class="p-2 whitespace-nowrap text-xs opacity-40 group-hover:opacity-100">
-                <a href="#" class="underline text-green-600 hover:text-green-700">Stiahnúť</a> &middot;
-                <a href="#" class="underline text-green-600 hover:text-green-700">Log kompilácie</a>
+            <td class="p-2 whitespace-nowrap text-xs opacity-40 group-hover:opacity-100 w-full text-right">
+                <a href="#" class="underline text-green-600 hover:text-green-700">Stiahnúť</a>
+                {% if version.compile_log %}
+                &middot; <a href="#" class="underline text-green-600 hover:text-green-700">Log kompilácie</a>
+                {% endif %}
             </td>
         </tr>
     {% endfor %}
