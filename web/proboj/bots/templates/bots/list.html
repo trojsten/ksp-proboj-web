@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}Zoznam tvojich botov {{ block.super }}{% endblock %}
+
+{% block content %}
+    <div class="flex items-center mb-4 justify-between flex-wrap">
+        <h1 class="font-semibold text-3xl">Tvoji boti</h1>
+
+        <a href="#" class="btn">Nový bot</a>
+    </div>
+
+    <div class="border rounded-md divide-y overflow-hidden">
+        {% for bot in object_list %}
+            <a href="#" class="px-2.5 py-1.5 block hover:bg-gray-100">
+                {{ bot.name }}
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}

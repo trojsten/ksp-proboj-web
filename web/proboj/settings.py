@@ -84,19 +84,10 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_PATH = BASE_DIR / "static"
 
+MEDIA_URL = "uploads/"
+MEDIA_ROOT = BASE_DIR / "uploads"
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "private": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-        "OPTIONS": {
-            "location": BASE_DIR / "private",
-        },
-    },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-}
+# Celery
+CELERY_BROKER_URL = env("CELERY_BROKER_URL")

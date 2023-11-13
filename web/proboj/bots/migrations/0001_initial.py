@@ -85,8 +85,7 @@ class Migration(migrations.Migration):
                     models.FileField(
                         blank=True,
                         null=True,
-                        storage=proboj.bots.models.private_storage,
-                        upload_to=proboj.bots.models.bot_version_path,
+                        upload_to=proboj.bots.models._bot_version_path,
                     ),
                 ),
                 (
@@ -94,8 +93,7 @@ class Migration(migrations.Migration):
                     models.FileField(
                         blank=True,
                         null=True,
-                        storage=proboj.bots.models.private_storage,
-                        upload_to=proboj.bots.models.bot_version_path,
+                        upload_to=proboj.bots.models._bot_version_path,
                     ),
                 ),
                 ("number", models.IntegerField(blank=True, null=True)),
