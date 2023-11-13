@@ -12,7 +12,7 @@
     {% if object_list %}
     <div class="border rounded-md divide-y overflow-hidden">
         {% for bot in object_list %}
-            <a href="#" class="px-2.5 py-1.5 block hover:bg-gray-100">
+            <a href="{% url "bot_detail" game=game.id pk=bot.pk %}" class="px-2.5 py-1.5 block hover:bg-gray-100">
                 {{ bot.name }}
             </a>
         {% endfor %}
