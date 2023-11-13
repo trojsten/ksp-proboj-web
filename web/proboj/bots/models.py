@@ -1,21 +1,28 @@
 import os.path
 import secrets
 
+from celery import current_app
 from django.conf import settings
-from django.core.files.storage import storages
 from django.core.validators import validate_slug
 from django.db import models
 from django.db.models import UniqueConstraint
 
 
-def private_storage():
-    return storages["private"]
-
-
-def bot_version_path(instance: "BotVersion", filename):
+def _bot_version_path(instance: "BotVersion", filename, destname):
     _, ext = os.path.splitext(filename)
-    ts = int(instance.created_at.timestamp())
-    return f"bots/{instance.bot_id}/{ts}/{secrets.token_urlsafe(8)}{ext}"
+    return f"bots/{instance.bot_id}/{instance.secret}/{destname}{ext}"
+
+
+def bot_version_sources(instance: "BotVersion", filename):
+    return _bot_version_path(instance, filename, "sources")
+
+
+def bot_version_compiled(instance: "BotVersion", filename):
+    return _bot_version_path(instance, filename, "compiled")
+
+
+def bot_secret():
+    return secrets.token_hex(16)
 
 
 class Bot(models.Model):
@@ -33,25 +40,48 @@ class Bot(models.Model):
 
 
 class BotVersion(models.Model):
+    class Language(models.TextChoices):
+        PYTHON = ("py", "Python")
+        CPP = ("cpp", "C++")
+
     bot = models.ForeignKey(Bot, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    secret = models.CharField(max_length=32, default=bot_secret)
+
     is_enabled = models.BooleanField(default=False)
     is_latest = models.BooleanField(default=False)
-    sources = models.FileField(
-        upload_to=bot_version_path, storage=private_storage, blank=True, null=True
-    )
-    compiled = models.FileField(
-        upload_to=bot_version_path, storage=private_storage, blank=True, null=True
-    )
+
+    language = models.CharField(choices=Language.choices)
+    sources = models.FileField(upload_to=bot_version_sources, blank=True, null=True)
+    compiled = models.FileField(upload_to=bot_version_compiled, blank=True, null=True)
+    compile_log = models.TextField(blank=True)
 
     number = models.IntegerField(blank=True, null=True)
 
     class Meta:
         ordering = ["-created_at"]
+        constraints = [
+            UniqueConstraint("bot", "secret", name="botversion__bot_secret__unique"),
+        ]
 
     def __str__(self):
-        timestamp = self.created_at.strftime("%d.%m.%Y %H:%M:%S")
-        return f"{self.bot} {timestamp}"
+        return f"{self.bot} v{self.number}"
+
+    def compile(self):
+        if self.language == BotVersion.Language.PYTHON:
+            self.compiled = self.sources
+            self.save()
+            return
+
+        current_app.send_task(
+            "compiler.compile_player",
+            queue="compile",
+            kwargs={
+                "source_url": self.sources.url,
+                "language": self.language.value,
+                "report_url": "",
+            },
+        )
 
     def save(self, **kwargs):
         if self.number is None:

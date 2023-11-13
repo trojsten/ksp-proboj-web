@@ -3,7 +3,9 @@ x-env: &x-env
   - SECRET_KEY=django-insecure-airootheesaethahpoo2EeLahze3wooGh9Ash2zae9ohgiengi
   - DATABASE_URL=postgres://postgres:postgres@db/postgres
   - ALLOWED_HOSTS=localhost
+  - CELERY_BROKER_URL=redis://redis
 
+name: ksp-proboj-web
 services:
   db:
     image: postgres:16
@@ -26,12 +28,17 @@ services:
       - db
     command: "./start.sh dev"
 
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
   tailwind:
     build:
       context: .
       target: cssbuild
     volumes:
-      - ./:/app/
+      - ./proboj:/app/proboj
     tty: true
 
 volumes:

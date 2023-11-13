@@ -13,6 +13,8 @@ django-environ = "^0.11.2"
 django-widget-tweaks = "^1.5.0"
 markdown = "^3.5.1"
 pygments = "^2.16.1"
+celery = "^5.3.5"
+redis = "^5.0.1"
 
 [build-system]
 requires = ["poetry-core"]
