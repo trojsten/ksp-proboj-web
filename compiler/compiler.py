@@ -10,6 +10,7 @@ import yaml
 from celery import Celery
 from celery.utils.log import get_task_logger
 from podman import PodmanClient
+from requests import HTTPError
 
 logger: logging.Logger = get_task_logger(__name__)
 
@@ -35,10 +36,10 @@ class CompilerOutput:
     log: str
 
 
-@app.task(time_limit=20)
+@app.task(time_limit=20, autoretry_for=(HTTPError,))
 def compile_player(source_url: str, language: str, report_url: str):
     if language not in CONFIG["images"]:
-        logger.error(f"Could not compile, unknown language {language}.")
+        report_failure(report_url, f"Unknown language '{language}'.")
         return
 
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -48,22 +49,17 @@ def compile_player(source_url: str, language: str, report_url: str):
         src = download_sources(source_url)
         unzip_sources(src, tmpdir_path)
         if player_output.exists():
-            report_result(
-                report_url,
-                Result(False, "INTERNAL ERROR: File 'player' already exists.\n"),
-            )
-            logger.warning("Could not compile, file 'player' already exists.")
+            report_failure(report_url, "File 'player' already exists.")
             return
 
-        result = compile_sources(tmpdir_path, language)
+        try:
+            result = compile_sources(tmpdir_path, language)
+        except Exception as e:
+            report_failure(report_url, str(e))
+            return
+
         if not player_output.exists():
-            report_result(
-                report_url,
-                Result(
-                    False,
-                    result.log + "\nINTERNAL ERROR: Compiler did not produce output.\n",
-                ),
-            )
+            report_failure(report_url, "Compiler did not produce output.", result.log)
             return
 
         report_result(
@@ -144,3 +140,13 @@ def report_result(url: str, res: Result) -> None:
     finally:
         if res.output:
             files["output"].close()
+
+
+def report_failure(url: str, error: str, log: str | None = None):
+    if log:
+        log += f"\nINTERNAL ERROR: {error}\n"
+    else:
+        log = f"INTERNAL ERROR: {error}\n"
+
+    logger.error(f"Could not compile: {error}")
+    report_result(url, Result(False, log))
