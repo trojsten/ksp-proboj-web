@@ -4,6 +4,10 @@ Proboj Executor sa stará o spúšťanie hier na serveri.
 Cez Celery dostane údaje o hre, posťahuje si potrebné súbory z Proboj Webu
 a po skončení hry nahrá výsledky.
 
+## Setup
+
+Pre CPU pinning viď [Podman troubleshooting](https://github.com/containers/podman/blob/main/troubleshooting.md#26-running-containers-with-resource-limits-fails-with-a-permissions-error).
+
 ## Konfigurácia
 
 Viď [config.example.yml](config.example.yml).
