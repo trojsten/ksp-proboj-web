@@ -16,7 +16,7 @@
 
             {% include "bots/_detail_versions.html" %}
 
-            <a href="{% url "bot_upload" game=game.id pk=bot.id %}" class="mt-2 btn">
+            <a href="{% url "bot_upload" game=game.id bot=bot.id %}" class="mt-2 btn">
                 Nahrať verziu
             </a>
         </div>

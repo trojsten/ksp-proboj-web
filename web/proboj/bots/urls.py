@@ -10,7 +10,7 @@ urlpatterns = [
         name="bot_detail",
     ),
     path(
-        "games/<int:game>/bots/<int:pk>/versions/create/",
+        "games/<int:game>/bots/<int:bot>/versions/create/",
         views.BotUploadView.as_view(),
         name="bot_upload",
     ),
