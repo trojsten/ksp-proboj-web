@@ -1,0 +1,29 @@
+# Podman configuration
+podman:
+  # Socket URL
+  url: unix:///run/user/1000/podman/podman.sock
+
+# Celery configuration
+celery:
+  # Broker URL
+  broker_url: redis://localhost
+  
+  # Other Celery options can be set here.
+  # https://docs.celeryq.dev/en/stable/userguide/configuration.html#configuration
+
+# Executor options
+executor:
+  # Executor image name
+  image: localhost/exc:latest
+
+  # Storage root directory
+  root: ./root
+
+  # Enable game logs
+  logs: true
+
+  # Configure CPU pinning
+  # Use -1, -1 to disable
+  pin_cpu:
+    min: 0
+    max: 4
