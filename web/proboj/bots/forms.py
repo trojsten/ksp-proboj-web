@@ -19,6 +19,6 @@ class BotUploadForm(forms.ModelForm):
 
 
 class CompileUploadForm(forms.Form):
-    successful = forms.BooleanField(required=True)
-    log = forms.CharField()
-    output = forms.FileField()
+    successful = forms.BooleanField(required=False)
+    log = forms.CharField(required=False)
+    output = forms.FileField(required=False)

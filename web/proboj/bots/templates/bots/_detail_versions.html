@@ -23,9 +23,9 @@
                 {% endif %}
             </td>
             <td class="p-2 whitespace-nowrap text-xs opacity-40 group-hover:opacity-100 w-full text-right">
-                <a href="#" class="underline text-green-600 hover:text-green-700">Stiahnúť</a>
+                <a href="{% url "bot_download" game=game.id bot=bot.id pk=version.id %}" class="underline text-green-600 hover:text-green-700">Stiahnúť</a>
                 {% if version.compile_log %}
-                &middot; <a href="#" class="underline text-green-600 hover:text-green-700">Log kompilácie</a>
+                &middot; <a href="{% url "bot_compile_log" game=game.id bot=bot.id pk=version.id %}" class="underline text-green-600 hover:text-green-700">Log kompilácie</a>
                 {% endif %}
             </td>
         </tr>

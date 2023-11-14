@@ -15,7 +15,7 @@ class BotMixin(GameMixin):
     def bot(self):
         return get_object_or_404(
             Bot.objects.filter(game=self.game, user=self.request.user),
-            id=self.kwargs["pk"],
+            id=self.kwargs["bot"],
         )
 
     def get_context_data(self, **kwargs):
