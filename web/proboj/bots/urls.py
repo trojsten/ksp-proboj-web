@@ -26,7 +26,7 @@ urlpatterns = [
     ),
     #
     path(
-        "upload/<int:bot>/<secret>/",
+        "api/bot_upload/<int:bot>/<secret>/",
         views.CompileUploadView.as_view(),
         name="bot_compile",
     ),
