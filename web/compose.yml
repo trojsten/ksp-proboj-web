@@ -27,7 +27,30 @@ services:
     environment: *x-env
     depends_on:
       - db
+      - redis
     command: "./start.sh dev"
+
+  worker:
+    build:
+      context: .
+    volumes:
+      - ./:/app/
+    environment: *x-env
+    depends_on:
+      - db
+      - redis
+    command: "./start.sh worker"
+
+  beat:
+    build:
+      context: .
+    volumes:
+      - ./:/app/
+    environment: *x-env
+    depends_on:
+      - db
+      - redis
+    command: "./start.sh beat"
 
   redis:
     image: redis:7

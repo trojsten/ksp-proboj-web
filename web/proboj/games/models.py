@@ -1,10 +1,39 @@
+import os
+
 from django.db import models
+
+from proboj.storage import OverwriteStorage
+
+
+def _game_path(instance: "Game", path: str, filename: str):
+    _, ext = os.path.splitext(filename)
+    return f"game/{instance.id}/{path}{ext}"
+
+
+def _game_server(instance: "Game", filename: str):
+    return _game_path(instance, "server", filename)
+
+
+def _game_bundle(instance: "Game", filename: str):
+    return _game_path(instance, "bundle", filename)
 
 
 class Game(models.Model):
     name = models.CharField(max_length=128)
     start_at = models.DateTimeField()
     end_at = models.DateTimeField()
+
+    server = models.FileField(
+        storage=OverwriteStorage(), upload_to=_game_server, blank=True
+    )
+    server_version = models.CharField(max_length=64, blank=True)
+    bundle = models.FileField(
+        storage=OverwriteStorage(), upload_to=_game_bundle, blank=True
+    )
+    bundle_version = models.CharField(max_length=64, blank=True)
+
+    bot_timeout = models.DecimalField(max_digits=6, decimal_places=3, default=1)
+    auto_play = models.IntegerField(default=0)
 
     rules = models.TextField(blank=True)
 

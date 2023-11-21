@@ -1,7 +1,11 @@
 import os
 import secrets
 
+from celery import current_app
+from django.conf import settings
+from django.core.signing import Signer
 from django.db import models
+from django.urls import reverse
 
 
 def _match_path(match: "Match", path: str, filename: str):
@@ -36,6 +40,44 @@ class Match(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+    def enqueue(self):
+        if self.is_finished:
+            return
+
+        if not self.game.server or not self.game.bundle:
+            return
+
+        s = Signer()
+
+        current_app.send_task(
+            "executor.run_match",
+            queue="execute",
+            kwargs={
+                "game_id": self.game_id,
+                "server_url": settings.BASE_URL + self.game.server.url,
+                "server_version": self.game.server_version,
+                "bundle_url": settings.BASE_URL + self.game.bundle.url,
+                "bundle_version": self.game.bundle_version,
+                "players": [
+                    {
+                        "name": b.bot_version.bot.name,
+                        "url": settings.BASE_URL + b.bot_version.compiled.url,
+                        "version": b.bot_version.number,
+                        "language": b.bot_version.language,
+                    }
+                    for b in self.matchbot_set.select_related(
+                        "bot_version", "bot_version__bot"
+                    ).all()
+                ],
+                "args": self.configuration.args,
+                "report_url": settings.BASE_URL
+                + reverse(
+                    "match_upload", kwargs={"secret": s.sign_object({"match": self.id})}
+                ),
+                "timeout": self.game.bot_timeout,
+            },
+        )
 
 
 class MatchBot(models.Model):
