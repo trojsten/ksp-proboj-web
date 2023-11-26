@@ -51,6 +51,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "proboj.matches.context_processors.observer_url",
             ],
         },
     },
@@ -87,6 +88,9 @@ STATIC_PATH = BASE_DIR / "static"
 
 MEDIA_URL = "uploads/"
 MEDIA_ROOT = BASE_DIR / "uploads"
+
+OBSERVER_URL = "/observer/"
+OBSERVER_ROOT = BASE_DIR / "observer"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

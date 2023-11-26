@@ -30,16 +30,30 @@
             </table>
         </div>
         <div>
+            {% if match.observer_log %}
             <h2 class="font-semibold text-xl mb-4">Záznam</h2>
 
             <div class="mb-6 flex gap-1 flex-wrap">
-                <a href="#" class="btn">Prehrať</a>
-                <a href="#" class="btn">Stiahnúť</a>
+                <a href="{{ OBSERVER_URL }}/{{ match.game_id }}/?file={{ match.observer_log.url|urlencode }}" class="btn">Prehrať</a>
+                <a href="{{ match.observer_log.url }}" class="btn">Stiahnúť</a>
             </div>
+            {% endif %}
 
+            {% if match.is_finished %}
             <h2 class="font-semibold text-xl mb-4">Logy</h2>
 
-            <div class="text-sm">TODO</div>
+            <div class="mb-6 flex gap-1 flex-wrap">
+                {% if match.server_log %}
+                <a href="{{ match.server_log.url }}" class="btn">Server</a>
+                {% endif %}
+
+                {% for bot in match.matchbot_set.all %}
+                    {% if user.is_staff or bot.bot_version.bot.user == user %}
+                    <a href="{{ bot.log.url }}" class="btn">{{ bot.bot_version.bot }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

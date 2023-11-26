@@ -34,9 +34,13 @@
                     {% endfor %}
                 </td>
                 <td class="p-2 whitespace-nowrap text-xs opacity-40 group-hover:opacity-100">
-                    <a href="#" class="underline text-green-600 hover:text-green-700">Prehrať</a> &middot;
-                    <a href="#" class="underline text-green-600 hover:text-green-700">Stiahnúť</a> &middot;
+                    {% if match.is_finished %}
+                        {% if match.observer_log %}
+                        <a href="{{ OBSERVER_URL }}/{{ match.game_id }}/?file={{ match.observer_log.url|urlencode }}" class="underline text-green-600 hover:text-green-700">Prehrať</a> &middot;
+                        <a href="{{ match.observer_log.url }}" class="underline text-green-600 hover:text-green-700">Stiahnúť</a> &middot;
+                        {% endif %}
                     <a href="{% url "match_detail" game=game.id pk=match.id %}" class="underline text-green-600 hover:text-green-700">Detail</a>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
