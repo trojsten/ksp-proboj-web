@@ -34,6 +34,7 @@ class Game(models.Model):
 
     bot_timeout = models.DecimalField(max_digits=6, decimal_places=3, default=1)
     auto_play = models.IntegerField(default=0)
+    max_bots = models.IntegerField(default=0)
 
     rules = models.TextField(blank=True)
 

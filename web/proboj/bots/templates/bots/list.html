@@ -6,7 +6,9 @@
     <div class="flex items-center mb-4 justify-between flex-wrap">
         <h1 class="font-semibold text-3xl">Tvoji boti</h1>
 
-        <a href="#" class="btn">Nový bot</a>
+        {% if can_create %}
+        <a href="{% url "bot_create" game=game.id %}" class="btn">Nový bot</a>
+        {% endif %}
     </div>
 
     {% if object_list %}

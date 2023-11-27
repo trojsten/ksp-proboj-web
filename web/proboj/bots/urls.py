@@ -5,6 +5,11 @@ from proboj.bots import views
 urlpatterns = [
     path("games/<int:game>/bots/", views.BotListView.as_view(), name="bot_list"),
     path(
+        "games/<int:game>/bots/create/",
+        views.BotCreateView.as_view(),
+        name="bot_create",
+    ),
+    path(
         "games/<int:game>/bots/<int:pk>/",
         views.BotDetailView.as_view(),
         name="bot_detail",

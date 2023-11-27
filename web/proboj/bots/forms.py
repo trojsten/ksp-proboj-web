@@ -1,6 +1,6 @@
 from django import forms
 
-from proboj.bots.models import BotVersion
+from proboj.bots.models import Bot, BotVersion
 
 
 class BotUploadForm(forms.ModelForm):
@@ -15,6 +15,16 @@ class BotUploadForm(forms.ModelForm):
 
         help_texts = {
             "sources": "Vo formáte ZIP.",
+        }
+
+
+class BotForm(forms.ModelForm):
+    class Meta:
+        model = Bot
+        fields = ["name"]
+
+        labels = {
+            "name": "Názov",
         }
 
 

@@ -8,14 +8,19 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, DetailView, ListView
 
-from proboj.bots.forms import BotUploadForm, CompileUploadForm
+from proboj.bots.forms import BotForm, BotUploadForm, CompileUploadForm
 from proboj.bots.mixins import BotMixin, BotQuerySetMixin
-from proboj.bots.models import BotVersion
+from proboj.bots.models import Bot, BotVersion
 from proboj.games.mixins import GameMixin
 
 
 class BotListView(LoginRequiredMixin, BotQuerySetMixin, GameMixin, ListView):
     template_name = "bots/list.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["can_create"] = len(self.object_list) < self.game.max_bots
+        return ctx
 
 
 class BotDetailView(LoginRequiredMixin, BotQuerySetMixin, GameMixin, DetailView):
@@ -25,6 +30,24 @@ class BotDetailView(LoginRequiredMixin, BotQuerySetMixin, GameMixin, DetailView)
         ctx = super().get_context_data(**kwargs)
         ctx["versions"] = self.object.botversion_set.all()
         return ctx
+
+
+class BotCreateView(GameMixin, CreateView):
+    template_name = "bots/create.html"
+    form_class = BotForm
+
+    def get_success_url(self):
+        return reverse(
+            "bot_detail", kwargs={"game": self.game.id, "pk": self.object.id}
+        )
+
+    def form_valid(self, form):
+        self.object: Bot = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.game = self.game
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class BotUploadView(LoginRequiredMixin, BotMixin, CreateView):
