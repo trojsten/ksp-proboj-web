@@ -1,6 +1,7 @@
 import os
 
 from django.db import models
+from django.utils import timezone
 
 from proboj.storage import OverwriteStorage
 
@@ -43,6 +44,10 @@ class Game(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def is_open(self):
+        return self.start_at <= timezone.now() <= self.end_at
 
 
 class Configuration(models.Model):

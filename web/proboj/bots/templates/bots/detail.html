@@ -16,9 +16,13 @@
 
             {% include "bots/_detail_versions.html" %}
 
+            {% if can_upload %}
             <a href="{% url "bot_upload" game=game.id bot=bot.id %}" class="mt-2 btn">
                 Nahrať verziu
             </a>
+            {% else %}
+            <div class="text-red-600 mt-2">Momentálne nie je možné odovzdávať nové verzie.</div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

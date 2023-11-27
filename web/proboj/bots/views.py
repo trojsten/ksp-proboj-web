@@ -29,6 +29,7 @@ class BotDetailView(LoginRequiredMixin, BotQuerySetMixin, GameMixin, DetailView)
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["versions"] = self.object.botversion_set.all()
+        ctx["can_upload"] = self.game.is_open
         return ctx
 
 
@@ -57,9 +58,14 @@ class BotCreateView(UserPassesTestMixin, GameMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class BotUploadView(LoginRequiredMixin, BotMixin, CreateView):
+class BotUploadView(UserPassesTestMixin, BotMixin, CreateView):
     template_name = "bots/upload.html"
     form_class = BotUploadForm
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+        return self.game.is_open
 
     def get_success_url(self):
         return reverse(
