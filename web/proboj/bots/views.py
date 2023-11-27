@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import BadRequest, PermissionDenied
 from django.http import FileResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -32,9 +32,16 @@ class BotDetailView(LoginRequiredMixin, BotQuerySetMixin, GameMixin, DetailView)
         return ctx
 
 
-class BotCreateView(GameMixin, CreateView):
+class BotCreateView(UserPassesTestMixin, GameMixin, CreateView):
     template_name = "bots/create.html"
     form_class = BotForm
+
+    def test_func(self):
+        if not self.request.user.is_authenticated:
+            return False
+
+        user_bots = Bot.objects.filter(game=self.game, user=self.request.user).count()
+        return user_bots < self.game.max_bots
 
     def get_success_url(self):
         return reverse(
