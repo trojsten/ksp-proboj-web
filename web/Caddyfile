@@ -1,0 +1,18 @@
+proboj.ksp.sk:80 {
+  handle /static/* {
+    root * /static/
+    file_server
+  }
+
+  handle /uploads/* {
+    root * /uploads/
+    file_server
+  }
+
+  handle /observer/* {
+    root * /observer/
+    file_server
+  }
+
+  reverse_proxy web:8000
+}

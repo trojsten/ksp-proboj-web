@@ -4,7 +4,7 @@ set -euo pipefail
 mode="${1:-prod}"
 
 if [ "$mode" = "worker" ]; then
-  exec celery -A proboj.celery worker
+  exec celery -A proboj.celery worker -c 2
 elif [ "$mode" = "beat" ]; then
   exec celery -A proboj.celery beat
 fi
