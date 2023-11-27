@@ -1,5 +1,5 @@
 import os.path
-from zipfile import ZipFile
+from zipfile import BadZipFile, ZipFile
 
 from django.core.exceptions import BadRequest
 from django.core.files.base import ContentFile
@@ -7,6 +7,7 @@ from django.core.signing import BadSignature, Signer
 from django.db import transaction
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -64,6 +65,7 @@ class MatchUploadView(View):
 
         successful: bool = form.cleaned_data.get("successful", False)
         match.is_finished = True
+        match.finished_at = timezone.now()
         match.failed = not successful
 
         scores: dict = form.cleaned_data.get("scores", dict())
@@ -83,12 +85,15 @@ class MatchUploadView(View):
 
         bot_logs = form.cleaned_data.get("bot_logs")
         if bot_logs:
-            with ZipFile(bot_logs) as zipf:
-                for file in zipf.namelist():
-                    bot_name, ext = os.path.splitext(file)
-                    if bot_name not in bots:
-                        continue
-                    bots[bot_name].log.save(file, ContentFile(zipf.read(file)))
+            try:
+                with ZipFile(bot_logs) as zipf:
+                    for file in zipf.namelist():
+                        bot_name, ext = os.path.splitext(file)
+                        if bot_name not in bots:
+                            continue
+                        bots[bot_name].log.save(file, ContentFile(zipf.read(file)))
+            except BadZipFile:
+                pass
 
         match.save()
         for b in bots.values():

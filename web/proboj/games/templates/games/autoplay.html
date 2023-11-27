@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Live zápasy {{ block.super }}{% endblock %}
+
+{% block body %}
+    <div class="min-w-screen w-full h-full min-h-screen bg-gray-900 pt-16 pb-6">
+        <div class="mx-auto max-w-xl bg-gray-600 rounded-md overflow-hidden">
+            <div class="bg-green-600 text-white font-bold text-xl p-2 text-center">Leaderboard</div>
+
+            <div class="text-white divide-y divide-gray-700">
+                {% for score in scores %}
+                <div class="px-4 py-2 text-sm flex items-center justify-between">
+                    <div>
+                        {{ score.bot_version__bot__name }}
+                    </div>
+
+                    <div class="shrink-0">
+                        {{ score.total }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if match %}
+            <meta http-equiv="refresh" content="15; url={{ observer }}">
+        {% else %}
+            <meta http-equiv="refresh" content="15">
+        {% endif %}
+    </div>
+{% endblock %}
+

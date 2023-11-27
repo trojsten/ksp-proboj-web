@@ -33,6 +33,7 @@ class Match(models.Model):
     game = models.ForeignKey("games.Game", on_delete=models.CASCADE)
     configuration = models.ForeignKey("games.Configuration", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
     is_finished = models.BooleanField(default=False)
     failed = models.BooleanField(default=False)
     server_log = models.FileField(blank=True, upload_to=_match_server_log)
