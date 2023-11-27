@@ -3,5 +3,8 @@ services:
     image: caddy
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./uploads:/uploads
+      - ./static:/static
+      - ./observer:/observer
     ports:
       - "80:80"
