@@ -87,7 +87,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
-STATIC_PATH = BASE_DIR / "static"
+STATIC_ROOT = BASE_DIR / "static"
 
 MEDIA_URL = "uploads/"
 MEDIA_ROOT = BASE_DIR / "uploads"
