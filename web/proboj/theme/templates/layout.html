@@ -10,7 +10,10 @@
 
             <div class="flex items-center gap-2">
                 {% if game %}
+                    <a href="{% url "game_detail" pk=game.id %}" class="hover:bg-green-100 text-green-800 px-2.5 py-1.5 rounded-md">Pravidlá</a>
                     <a href="{% url "match_list" game=game.id %}" class="hover:bg-green-100 text-green-800 px-2.5 py-1.5 rounded-md">Zápasy</a>
+                    <a href="{% url "game_leaderboard" game=game.id %}" class="hover:bg-green-100 text-green-800 px-2.5 py-1.5 rounded-md">Leaderboard</a>
+                    <a href="{% url "game_autoplay" game=game.id %}" class="hover:bg-red-100 text-red-800 px-2.5 py-1.5 rounded-md">Live</a>
                 {% endif %}
                 <a href="#" class="hover:bg-green-100 text-green-800 px-2.5 py-1.5 rounded-md">adasda</a>
             </div>

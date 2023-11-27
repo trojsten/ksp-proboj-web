@@ -2,16 +2,16 @@ import urllib.parse
 from datetime import datetime
 
 from django.conf import settings
-from django.db.models import Sum
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.timezone import make_aware
 from django.views.generic import DetailView, ListView, TemplateView
 
+from proboj.games.leaderboard import get_leaderboard
 from proboj.games.mixins import GameMixin
 from proboj.games.models import Game
-from proboj.matches.models import Match, MatchBot
+from proboj.matches.models import Match
 
 
 class HomeView(ListView):
@@ -53,16 +53,7 @@ class AutoPlayView(GameMixin, TemplateView):
             .first()
         )
         ctx["match"] = match
-        ctx["scores"] = (
-            MatchBot.objects.filter(
-                match__game=self.game,
-                match__is_finished=True,
-                match__finished_at__lte=self.ts,
-            )
-            .values("bot_version__bot__name")
-            .annotate(total=Sum("score"))
-            .order_by("-total")[0:10]
-        )
+        ctx["scores"] = get_leaderboard(self.game, self.ts)[0:10]
 
         if match:
             observer_file = match.observer_log.url
@@ -76,4 +67,13 @@ class AutoPlayView(GameMixin, TemplateView):
                 {"file": observer_file, "autoplay": "1", "back": return_url}
             )
 
+        return ctx
+
+
+class LeaderboardView(GameMixin, TemplateView):
+    template_name = "games/leaderboard.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["scores"] = get_leaderboard(self.game)
         return ctx

@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}Leaderboard {{ block.super }}{% endblock %}
+
+{% block content %}
+    <div class="mx-auto max-w-2xl">
+        <h1 class="font-semibold text-3xl mb-4">Leaderboard</h1>
+
+        <table class="w-full text-sm">
+            <thead class="bg-green-100 text-green-800 border-green-800 border-b">
+                <tr>
+                    <th class="p-2 text-left">#</th>
+                    <th class="p-2 text-left">Bot</th>
+                    <th class="p-2 text-right">Body</th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-green-800/30">
+                {% for score in scores %}
+                <tr class="{% cycle "" "bg-green-50" %} group">
+                    <td class="p-2">
+                        {{ forloop.counter }}.
+                    </td>
+                    <td class="p-2 w-full">
+                        {{ score.bot_version__bot__name }}
+                    </td>
+                    <td class="p-2 tabular-nums text-right">{{ score.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
