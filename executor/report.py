@@ -7,6 +7,9 @@ import requests
 def get_log(path: Path) -> Path | None:
     if path.exists():
         return path
+    path_txt = path.with_suffix(".txt")
+    if path_txt.exists():
+        return path_txt
     path_gz = path.with_suffix(".gz")
     if path_gz.exists():
         return path_gz
@@ -19,8 +22,10 @@ def report_result(url: str, match_dir: Path, success: bool, players: list[str]):
     data = {"successful": success}
     files = {}
 
-    with open(out_dir / "scores.json") as f:
-        data["scores"] = f.read()
+    score_file = out_dir / "score.json"
+    if score_file.exists():
+        with score_file.open() as f:
+            data["scores"] = f.read()
 
     server_log = get_log(out_dir / "logs" / "__server")
     if server_log:
