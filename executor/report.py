@@ -35,12 +35,13 @@ def report_result(url: str, match_dir: Path, success: bool, players: list[str]):
     if observer_log:
         files["observer_log"] = observer_log.open("rb")
 
-    zipf = ZipFile(out_dir / ".player_logs.zip", "w")
-    for player in players:
-        player_log = get_log(out_dir / "logs" / player)
-        if player_log:
-            zipf.write(player_log, f"{player}{player_log.suffix}")
-    files["bot_logs"] = zipf
+    log_zip = out_dir / ".player_logs.zip"
+    with ZipFile(log_zip, "w") as zipf:
+        for player in players:
+            player_log = get_log(out_dir / "logs" / player)
+            if player_log:
+                zipf.write(player_log, f"{player}{player_log.suffix}")
+    files["bot_logs"] = log_zip.open("rb")
 
     try:
         resp = requests.post(url, data=data, files=files)
