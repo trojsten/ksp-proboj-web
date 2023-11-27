@@ -33,7 +33,7 @@ class Game(models.Model):
     )
     bundle_version = models.CharField(max_length=64, blank=True)
 
-    bot_timeout = models.DecimalField(max_digits=6, decimal_places=3, default=1)
+    bot_timeout = models.JSONField(default=dict)
     auto_play = models.IntegerField(default=0)
     max_bots = models.IntegerField(default=0)
 
