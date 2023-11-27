@@ -96,7 +96,7 @@ class ScoreChartView(GameMixin, View):
             .order_by("finished_at")
         )
         for match in matches:
-            timestamps.append(match.finished_at.strftime("%Y-%m-%d %H:%M:%S"))
+            timestamps.append(match.finished_at.strftime("%Y-%m-%d %H:%M:%S.%f"))
             for bot in bots:
                 datapoints[bot.id].append(0)
 
