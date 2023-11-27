@@ -92,7 +92,7 @@ STATIC_ROOT = BASE_DIR / "static"
 MEDIA_URL = "uploads/"
 MEDIA_ROOT = BASE_DIR / "uploads"
 
-OBSERVER_URL = "/observer/"
+OBSERVER_URL = "/observer"
 OBSERVER_ROOT = BASE_DIR / "observer"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
