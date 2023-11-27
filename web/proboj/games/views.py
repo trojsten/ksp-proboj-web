@@ -1,13 +1,16 @@
 import urllib.parse
+from collections import defaultdict
 from datetime import datetime
 
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.timezone import make_aware
+from django.views import View
 from django.views.generic import DetailView, ListView, TemplateView
 
+from proboj.bots.models import Bot
 from proboj.games.leaderboard import get_leaderboard
 from proboj.games.mixins import GameMixin
 from proboj.games.models import Game
@@ -77,3 +80,45 @@ class LeaderboardView(GameMixin, TemplateView):
         ctx = super().get_context_data(**kwargs)
         ctx["scores"] = get_leaderboard(self.game)
         return ctx
+
+
+class ScoreChartView(GameMixin, View):
+    def get(self, request, *args, **kwargs):
+        bots = Bot.objects.filter(game=self.game, is_enabled=True).order_by("name")
+
+        timestamps = []
+        datapoints = defaultdict(lambda: [])
+        total_score = defaultdict(lambda: 0)
+
+        matches = (
+            Match.objects.filter(game=self.game, is_finished=True, failed=False)
+            .prefetch_related("matchbot_set", "matchbot_set__bot_version")
+            .order_by("finished_at")
+        )
+        for match in matches:
+            timestamps.append(match.finished_at.strftime("%Y-%m-%d %H:%M:%S"))
+            for bot in bots:
+                datapoints[bot.id].append(0)
+
+            for bot in match.matchbot_set.all():
+                bot_id = bot.bot_version.bot_id
+                total_score[bot_id] += bot.score
+                datapoints[bot_id][-1] = total_score[bot_id]
+
+        series = []
+        for bot in bots:
+            series.append(
+                {
+                    "name": bot.name,
+                    "type": "line",
+                    "data": [
+                        [timestamps[i], d] for i, d in enumerate(datapoints[bot.id])
+                    ],
+                }
+            )
+
+        return JsonResponse(
+            {
+                "series": series,
+            }
+        )

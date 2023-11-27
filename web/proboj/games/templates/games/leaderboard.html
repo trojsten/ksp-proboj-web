@@ -1,8 +1,15 @@
 {% extends "layout.html" %}
+{% load static %}
 
 {% block title %}Leaderboard {{ block.super }}{% endblock %}
 
+{% block extrahead %}
+    <script src="{% static "vendor/echarts.min.js" %}"></script>
+{% endblock %}
+
 {% block content %}
+    <div class="mb-4 w-full h-[24rem]" id="score-chart"></div>
+
     <div class="mx-auto max-w-2xl">
         <h1 class="font-semibold text-3xl mb-4">Leaderboard</h1>
 
@@ -30,4 +37,26 @@
             </tbody>
         </table>
     </div>
+
+    <script>
+      var myChart = echarts.init(document.getElementById('score-chart'));
+
+      myChart.setOption({
+          xAxis: {type: 'time'},
+          tooltip: {trigger: 'axis'},
+          grid: {
+              left: 50,
+              right: 50,
+              top: 50,
+              bottom: 50
+          }
+      })
+
+      fetch("{% url 'game_score_chart' game=game.id %}").then(res => res.json()).then(data => {
+          console.log(data)
+          myChart.setOption({
+              series: data.series,
+          })
+      })
+    </script>
 {% endblock %}
