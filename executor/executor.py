@@ -47,7 +47,7 @@ def run_match(
     players: list[dict],
     args: str,
     report_url: str,
-    timeout: float,
+    timeout: dict,
 ):
     game_root = Path(CONFIG["executor"]["root"]) / str(game_id)
     lock_root = Path(CONFIG["executor"]["root"]) / "locks"

@@ -7,7 +7,7 @@ from celery.utils.log import get_task_logger
 logger: logging.Logger = get_task_logger(__name__)
 
 
-def generate_config(match_dir: Path, players: list[dict], timeout: float, logs: bool):
+def generate_config(match_dir: Path, players: list[dict], timeout: dict, logs: bool):
     config = {
         "server": "/server/bin",
         "players": {},
@@ -26,7 +26,10 @@ def generate_config(match_dir: Path, players: list[dict], timeout: float, logs: 
             player_cmd = f"/usr/bin/python3 {player_py}"
 
         # todo: start wrapper
-        config["players"][player["name"]] = player_cmd
+        config["players"][player["name"]] = {
+            "command": player_cmd,
+            "language": player["language"],
+        }
 
     with (match_dir / "config.json").open("w") as f:
         json.dump(config, f)
