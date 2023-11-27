@@ -77,6 +77,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 AUTH_USER_MODEL = "users.User"
+LOGOUT_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/"
+LOGIN_URL = "login"
 
 LANGUAGE_CODE = "sk"
 TIME_ZONE = "Europe/Bratislava"

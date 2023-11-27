@@ -14,8 +14,16 @@
                     <a href="{% url "match_list" game=game.id %}" class="hover:bg-green-100 text-green-800 px-2.5 py-1.5 rounded-md">Zápasy</a>
                     <a href="{% url "game_leaderboard" game=game.id %}" class="hover:bg-green-100 text-green-800 px-2.5 py-1.5 rounded-md">Leaderboard</a>
                     <a href="{% url "game_autoplay" game=game.id %}" class="hover:bg-red-100 text-red-800 px-2.5 py-1.5 rounded-md">Live</a>
+                    {% if user.is_authenticated %}
+                    <a href="{% url "bot_list" game=game.id %}" class="hover:bg-green-100 text-green-800 px-2.5 py-1.5 rounded-md">Tvoji boti</a>
+                    {% endif %}
                 {% endif %}
-                <a href="#" class="hover:bg-green-100 text-green-800 px-2.5 py-1.5 rounded-md">adasda</a>
+                {% if user.is_authenticated %}
+                <form action="{% url "logout" %}" method="post" id="logout-form">{% csrf_token %}</form>
+                <a href="javascript:document.getElementById('logout-form').submit()" class="hover:bg-green-100 text-green-800 px-2.5 py-1.5 rounded-md">Odhlásiť sa</a>
+                {% else %}
+                <a href="{% url "login" %}" class="hover:bg-green-100 text-green-800 px-2.5 py-1.5 rounded-md">Prihlásiť sa</a>
+                {% endif %}
             </div>
         </div>
 
