@@ -29,11 +29,11 @@ def report_result(url: str, match_dir: Path, success: bool, players: list[str]):
 
     server_log = get_log(out_dir / "logs" / "__server")
     if server_log:
-        files["server_log"] = server_log.open("b")
+        files["server_log"] = server_log.open("rb")
 
     observer_log = get_log(out_dir / "observer")
     if observer_log:
-        files["observer_log"] = observer_log.open("b")
+        files["observer_log"] = observer_log.open("rb")
 
     zipf = ZipFile(out_dir / ".player_logs.zip")
     for player in players:
