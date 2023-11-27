@@ -8,6 +8,7 @@ from celery.utils.log import get_task_logger
 from filelock import FileLock
 
 from game import generate_config, generate_games
+from report import report_result
 from run import start_match
 from update import update_bundle, update_server, upload_player
 
@@ -79,6 +80,7 @@ def run_match(
         generate_config(match_dir, players, timeout, CONFIG["executor"]["logs"])
         generate_games(match_dir, players, args)
 
+        successful = False
         try:
             start_match(
                 CONFIG["podman"]["url"],
@@ -88,11 +90,8 @@ def run_match(
                 lock_root,
                 CONFIG["executor"]["pin_cpu"],
             )
+            successful = True
         except Exception as e:
             print(e)
 
-        # shutil.rmtree("./output")
-        # shutil.copytree(match_dir, "./output")
-
-        # todo: report output
-        pass
+        report_result(report_url, match_dir, successful, [pl["name"] for pl in players])
