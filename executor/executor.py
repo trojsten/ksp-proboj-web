@@ -92,6 +92,11 @@ def run_match(
             )
             successful = True
         except Exception as e:
-            print(e)
+            logger.error(f"Match did not end well: {e}")
 
-        report_result(report_url, match_dir, successful, [pl["name"] for pl in players])
+        try:
+            report_result(
+                report_url, match_dir, successful, [pl["name"] for pl in players]
+            )
+        except Exception as e:
+            self.retry(exc=e)
