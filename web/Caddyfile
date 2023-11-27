@@ -1,16 +1,16 @@
 proboj.ksp.sk:80 {
   handle /static/* {
-    root * /static/
+    root * /
     file_server
   }
 
   handle /uploads/* {
-    root * /uploads/
+    root * /
     file_server
   }
 
   handle /observer/* {
-    root * /observer/
+    root * /
     file_server
   }
 
