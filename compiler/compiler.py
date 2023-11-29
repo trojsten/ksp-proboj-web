@@ -36,7 +36,7 @@ class CompilerOutput:
     log: str
 
 
-@app.task(time_limit=20, autoretry_for=(HTTPError,))
+@app.task(time_limit=60, autoretry_for=(HTTPError,))
 def compile_player(source_url: str, language: str, report_url: str):
     if language not in CONFIG["images"]:
         report_failure(report_url, f"Unknown language '{language}'.")
