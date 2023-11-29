@@ -23,7 +23,7 @@ def generate_config(match_dir: Path, players: list[dict], timeout: dict, logs: b
         player_cmd = str(player_file)
         if player["language"] == "py":
             player_py = player_file.with_suffix(".py")
-            player_cmd = f"/usr/bin/python3 {player_py}"
+            player_cmd = f"/usr/bin/pypy3 {player_py}"
 
         # todo: start wrapper
         config["players"][player["name"]] = {
