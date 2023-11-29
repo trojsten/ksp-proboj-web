@@ -59,22 +59,22 @@
           }
       };
 
-      var myChart = echarts.init(document.getElementById('score-chart'));
-      myChart.setOption(chartOptions);
+      var scoreChart = echarts.init(document.getElementById('score-chart'));
+      scoreChart.setOption(chartOptions);
 
-      myChart = echarts.init(document.getElementById('score-derivation-chart'));
-      myChart.setOption(chartOptions);
+      var derivationChart = echarts.init(document.getElementById('score-derivation-chart'));
+      derivationChart.setOption(chartOptions);
 
       fetch("{% url 'game_score_chart' game=game.id %}").then(res => res.json()).then(data => {
           console.log(data)
-          myChart.setOption({
+          scoreChart.setOption({
               series: data.series,
           })
       })
 
       fetch("{% url 'game_score_derivation_chart' game=game.id %}").then(res => res.json()).then(data => {
           console.log(data)
-          myChart.setOption({
+          derivationChart.setOption({
               series: data.series,
           })
       })
