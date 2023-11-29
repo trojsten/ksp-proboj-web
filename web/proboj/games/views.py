@@ -98,6 +98,8 @@ def get_scores_and_timestamps(game, bots):
             datapoints[bot.id].append(total_score[bot.id])
 
         for bot in match.matchbot_set.all():
+            if not bot.score:
+                continue
             bot_id = bot.bot_version.bot_id
             total_score[bot_id] += bot.score
             datapoints[bot_id][-1] = total_score[bot_id]
