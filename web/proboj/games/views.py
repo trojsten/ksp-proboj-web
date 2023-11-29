@@ -98,7 +98,7 @@ class ScoreChartView(GameMixin, View):
         for match in matches:
             timestamps.append(match.finished_at.strftime("%Y-%m-%d %H:%M:%S.%f"))
             for bot in bots:
-                datapoints[bot.id].append(0)
+                datapoints[bot.id].append(total_score[bot.id])
 
             for bot in match.matchbot_set.all():
                 bot_id = bot.bot_version.bot_id
