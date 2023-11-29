@@ -10,6 +10,8 @@
 {% block content %}
     <div class="mb-4 w-full h-[24rem]" id="score-chart"></div>
 
+    <div class="mb-4 w-full h-[24rem]" id="score-derivation-chart"></div>
+
     <div class="mx-auto max-w-2xl">
         <h1 class="font-semibold text-3xl mb-4">Leaderboard</h1>
 
@@ -39,9 +41,7 @@
     </div>
 
     <script>
-      var myChart = echarts.init(document.getElementById('score-chart'));
-
-      myChart.setOption({
+      var chartOptions = {
           xAxis: {type: 'time'},
           tooltip: {trigger: 'axis'},
           yAxis: {},
@@ -57,9 +57,22 @@
               top: 50,
               bottom: 50
           }
-      })
+      };
+
+      var myChart = echarts.init(document.getElementById('score-chart'));
+      myChart.setOption(chartOptions);
+
+      myChart = echarts.init(document.getElementById('score-derivation-chart'));
+      myChart.setOption(chartOptions);
 
       fetch("{% url 'game_score_chart' game=game.id %}").then(res => res.json()).then(data => {
+          console.log(data)
+          myChart.setOption({
+              series: data.series,
+          })
+      })
+
+      fetch("{% url 'game_score_derivation_chart' game=game.id %}").then(res => res.json()).then(data => {
           console.log(data)
           myChart.setOption({
               series: data.series,

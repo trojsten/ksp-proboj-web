@@ -82,28 +82,33 @@ class LeaderboardView(GameMixin, TemplateView):
         return ctx
 
 
+def get_scores_and_timestamps(game, bots):
+    timestamps = []
+    datapoints = defaultdict(lambda: [])
+    total_score = defaultdict(lambda: 0)
+
+    matches = (
+        Match.objects.filter(game=game, is_finished=True, failed=False)
+        .prefetch_related("matchbot_set", "matchbot_set__bot_version")
+        .order_by("finished_at")
+    )
+    for match in matches:
+        timestamps.append(match.finished_at.strftime("%Y-%m-%d %H:%M:%S.%f"))
+        for bot in bots:
+            datapoints[bot.id].append(total_score[bot.id])
+
+        for bot in match.matchbot_set.all():
+            bot_id = bot.bot_version.bot_id
+            total_score[bot_id] += bot.score
+            datapoints[bot_id][-1] = total_score[bot_id]
+    return datapoints, timestamps
+
+
 class ScoreChartView(GameMixin, View):
     def get(self, request, *args, **kwargs):
         bots = Bot.objects.filter(game=self.game, is_enabled=True).order_by("name")
 
-        timestamps = []
-        datapoints = defaultdict(lambda: [])
-        total_score = defaultdict(lambda: 0)
-
-        matches = (
-            Match.objects.filter(game=self.game, is_finished=True, failed=False)
-            .prefetch_related("matchbot_set", "matchbot_set__bot_version")
-            .order_by("finished_at")
-        )
-        for match in matches:
-            timestamps.append(match.finished_at.strftime("%Y-%m-%d %H:%M:%S.%f"))
-            for bot in bots:
-                datapoints[bot.id].append(total_score[bot.id])
-
-            for bot in match.matchbot_set.all():
-                bot_id = bot.bot_version.bot_id
-                total_score[bot_id] += bot.score
-                datapoints[bot_id][-1] = total_score[bot_id]
+        datapoints, timestamps = get_scores_and_timestamps(self.game, bots)
 
         series = []
         for bot in bots:
@@ -114,6 +119,40 @@ class ScoreChartView(GameMixin, View):
                     "symbol": "none",
                     "data": [
                         [timestamps[i], d] for i, d in enumerate(datapoints[bot.id])
+                    ],
+                }
+            )
+
+        return JsonResponse(
+            {
+                "series": series,
+            }
+        )
+
+
+class ScoreDerivationChartView(GameMixin, View):
+    def get(self, request, *args, **kwargs):
+        bots = Bot.objects.filter(game=self.game, is_enabled=True).order_by("name")
+
+        datapoints, timestamps = get_scores_and_timestamps(self.game, bots)
+
+        diff = 50
+        derivations = {bot: [] for bot in datapoints}
+        for i in range(diff, len(datapoints)):
+            for bot in datapoints:
+                derivations[bot].append(datapoints[bot][i] - datapoints[bot][i - diff])
+
+        print(derivations)
+
+        series = []
+        for bot in bots:
+            series.append(
+                {
+                    "name": bot.name,
+                    "type": "line",
+                    "symbol": "none",
+                    "data": [
+                        [timestamps[i], d] for i, d in enumerate(derivations[bot.id])
                     ],
                 }
             )

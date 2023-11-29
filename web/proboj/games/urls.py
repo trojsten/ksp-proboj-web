@@ -6,6 +6,7 @@ from proboj.games.views import (
     HomeView,
     LeaderboardView,
     ScoreChartView,
+    ScoreDerivationChartView,
 )
 
 urlpatterns = [
@@ -16,6 +17,11 @@ urlpatterns = [
         "games/<int:game>/scores.json",
         ScoreChartView.as_view(),
         name="game_score_chart",
+    ),
+    path(
+        "games/<int:game>/derivation.json",
+        ScoreDerivationChartView.as_view(),
+        name="game_score_derivation_chart",
     ),
     path(
         "games/<int:game>/leaderboard/",
