@@ -111,6 +111,7 @@ class ScoreChartView(GameMixin, View):
                 {
                     "name": bot.name,
                     "type": "line",
+                    "symbol": "none",
                     "data": [
                         [timestamps[i], d] for i, d in enumerate(datapoints[bot.id])
                     ],
