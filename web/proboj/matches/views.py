@@ -5,7 +5,7 @@ from django.core.exceptions import BadRequest
 from django.core.files.base import ContentFile
 from django.core.signing import BadSignature, Signer
 from django.db import transaction
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -15,6 +15,7 @@ from django.views.generic import DetailView, ListView
 
 from proboj.games.mixins import GameMixin
 from proboj.matches.forms import MatchUploadForm
+from proboj.matches.generator import generate_matches
 from proboj.matches.models import Match, MatchBot
 
 
@@ -101,3 +102,13 @@ class MatchUploadView(View):
             b.save()
 
         return HttpResponse("ok")
+
+
+class MatchConfigView(GameMixin, View):
+    def get(self, request, *args, **kwargs):
+        try:
+            matches = generate_matches(self.game, int(request.GET.get("n", 1)))
+        except ValueError:
+            raise BadRequest()
+
+        return JsonResponse([m.to_json() for m in matches], safe=False)
