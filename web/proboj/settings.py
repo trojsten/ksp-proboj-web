@@ -60,6 +60,12 @@ TEMPLATES = [
 WSGI_APPLICATION = "proboj.wsgi.application"
 
 DATABASES = {"default": env.db()}
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": env("REDIS_CACHE_URL", default=env("CELERY_BROKER_URL")),
+    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {

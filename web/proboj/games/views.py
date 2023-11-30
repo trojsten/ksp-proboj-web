@@ -6,8 +6,10 @@ from django.conf import settings
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.timezone import make_aware
 from django.views import View
+from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, ListView, TemplateView
 
 from proboj.bots.models import Bot
@@ -108,10 +110,10 @@ def get_scores_and_timestamps(game, bots):
     return datapoints, timestamps
 
 
+@method_decorator(cache_page(60 * 5), name="dispatch")
 class ScoreChartView(GameMixin, View):
     def get(self, request, *args, **kwargs):
         bots = Bot.objects.filter(game=self.game, is_enabled=True).order_by("name")
-
         datapoints, timestamps = get_scores_and_timestamps(self.game, bots)
 
         series = []
@@ -127,17 +129,13 @@ class ScoreChartView(GameMixin, View):
                 }
             )
 
-        return JsonResponse(
-            {
-                "series": series,
-            }
-        )
+        return JsonResponse({"series": series})
 
 
+@method_decorator(cache_page(60 * 5), name="dispatch")
 class ScoreDerivationChartView(GameMixin, View):
     def get(self, request, *args, **kwargs):
         bots = Bot.objects.filter(game=self.game, is_enabled=True).order_by("name")
-
         datapoints, timestamps = get_scores_and_timestamps(self.game, bots)
 
         diff = 50
@@ -161,8 +159,4 @@ class ScoreDerivationChartView(GameMixin, View):
                 }
             )
 
-        return JsonResponse(
-            {
-                "series": series,
-            }
-        )
+        return JsonResponse({"series": series})
