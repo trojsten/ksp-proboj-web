@@ -20,6 +20,7 @@ from proboj.matches.models import Match, MatchBot
 
 class MatchListView(GameMixin, ListView):
     template_name = "matches/list.html"
+    paginate_by = 200
 
     def get_queryset(self):
         return (
