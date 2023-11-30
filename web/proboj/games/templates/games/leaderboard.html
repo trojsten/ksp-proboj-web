@@ -33,7 +33,7 @@
                     <td class="p-2 w-full">
                         {{ score.bot_version__bot__name }}
                     </td>
-                    <td class="p-2 tabular-nums text-right">{{ score.total }}</td>
+                    <td class="p-2 tabular-nums text-right">{{ score.total|floatformat:"g" }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

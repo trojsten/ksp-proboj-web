@@ -15,7 +15,7 @@
                     </div>
 
                     <div class="shrink-0">
-                        {{ score.total }}
+                        {{ score.total|floatformat:"g" }}
                     </div>
                 </div>
                 {% endfor %}

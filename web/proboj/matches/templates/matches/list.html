@@ -30,7 +30,7 @@
                 <td class="p-2 whitespace-nowrap">{{ match.configuration }}</td>
                 <td class="p-2 w-full">
                     {% for mbot in match.matchbot_set.all %}
-                    	{% if mbot.score %}{{ mbot.bot_version.bot }}: {{ mbot.score }}{% if not forloop.last %},{% endif %}{% endif %}
+                    	{% if mbot.score %}{{ mbot.bot_version.bot }}: {{ mbot.score|floatformat:"g" }}{% if not forloop.last %},{% endif %}{% endif %}
                     {% endfor %}
                 </td>
                 <td class="p-2 whitespace-nowrap text-xs opacity-40 group-hover:opacity-100">
