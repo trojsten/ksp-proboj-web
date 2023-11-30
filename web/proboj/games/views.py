@@ -142,7 +142,7 @@ class ScoreDerivationChartView(GameMixin, View):
         derivations = {bot: [0] * diff for bot in datapoints}
         for bot in datapoints:
             for i in range(diff, len(datapoints[bot])):
-                derivations[bot].append(datapoints[bot][i] - datapoints[bot][i - diff])
+                derivations[bot].append((datapoints[bot][i] - datapoints[bot][i - diff])/diff)
 
         series = []
         for bot in bots:
