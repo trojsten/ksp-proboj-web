@@ -23,6 +23,7 @@ class Game(models.Model):
     name = models.CharField(max_length=128)
     start_at = models.DateTimeField()
     end_at = models.DateTimeField()
+    score_reset_at = models.DateTimeField(blank=True, null=True)
 
     server = models.FileField(
         storage=OverwriteStorage(), upload_to=_game_server, blank=True

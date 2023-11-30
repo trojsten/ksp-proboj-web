@@ -92,6 +92,8 @@ def get_scores_and_timestamps(game, bots):
         .prefetch_related("matchbot_set", "matchbot_set__bot_version")
         .order_by("finished_at")
     )
+    if game.score_reset_at and game.score_reset_at < timezone.now():
+        matches = matches.filter(finished_at__gte=game.score_reset_at)
     for match in matches:
         timestamps.append(match.finished_at.strftime("%Y-%m-%d %H:%M:%S.%f"))
         for bot in bots:
@@ -142,7 +144,9 @@ class ScoreDerivationChartView(GameMixin, View):
         derivations = {bot: [0] * diff for bot in datapoints}
         for bot in datapoints:
             for i in range(diff, len(datapoints[bot])):
-                derivations[bot].append((datapoints[bot][i] - datapoints[bot][i - diff])/diff)
+                derivations[bot].append(
+                    (datapoints[bot][i] - datapoints[bot][i - diff]) / diff
+                )
 
         series = []
         for bot in bots:
