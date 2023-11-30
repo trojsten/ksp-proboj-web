@@ -43,7 +43,10 @@
     <script>
       var chartOptions = {
           xAxis: {type: 'time'},
-          tooltip: {trigger: 'axis'},
+          tooltip: {
+              trigger: 'axis',
+              order: 'valueDesc'
+          },
           yAxis: {},
           dataZoom: [
             {
