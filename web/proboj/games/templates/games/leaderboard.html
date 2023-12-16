@@ -26,7 +26,7 @@
 
         <tbody class="divide-y divide-green-800/30">
             {% for score in scores %}
-            <tr class="{% cycle "" "bg-green-50" %} group">
+            <tr class="even:bg-green-50 group {% if score.bot_version__bot__user__username == user.username %}bg-yellow-100{% endif %}">
                 <td class="p-2">
                     {{ forloop.counter }}.
                 </td>
