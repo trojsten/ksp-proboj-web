@@ -28,6 +28,10 @@ urlpatterns = [
 ]
 
 
+if settings.USE_OIDC:
+    urlpatterns.append(path("oidc/", include("mozilla_django_oidc.urls")))
+
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.OBSERVER_URL, document_root=settings.OBSERVER_ROOT)

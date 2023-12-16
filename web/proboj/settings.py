@@ -87,6 +87,33 @@ LOGOUT_REDIRECT_URL = "/"
 LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "login"
 
+USE_OIDC = env("PROBOJ_USE_OIDC", default=False)
+if USE_OIDC:
+    AUTHENTICATION_BACKENDS = [
+        "proboj.users.oidc.TrojstenID",
+        "django.contrib.auth.backends.ModelBackend",
+    ]
+
+    MIDDLEWARE.append("mozilla_django_oidc.middleware.SessionRefresh")
+    INSTALLED_APPS.append("mozilla_django_oidc")
+
+    OIDC_OP_AUTHORIZATION_ENDPOINT = env(
+        "OIDC_OP_AUTHORIZATION_ENDPOINT",
+        default="https://id.trojsten.sk/oauth/authorize/",
+    )
+    OIDC_OP_USER_ENDPOINT = env(
+        "OIDC_OP_USER_ENDPOINT", default="https://id.trojsten.sk/oauth/userinfo/"
+    )
+    OIDC_OP_TOKEN_ENDPOINT = env(
+        "OIDC_OP_TOKEN_ENDPOINT", default="https://id.trojsten.sk/oauth/token/"
+    )
+    OIDC_RP_SCOPES = "openid email profile"
+    OIDC_RP_SIGN_ALGO = "HS256"
+    OIDC_RP_CLIENT_ID = env("OIDC_RP_CLIENT_ID")
+    OIDC_RP_CLIENT_SECRET = env("OIDC_RP_CLIENT_SECRET")
+    OIDC_OP_LOGOUT_URL_METHOD = "proboj.users.oidc.logout_url"
+    OIDC_RENEW_ID_TOKEN_EXPIRY_SECONDS = 60 * 60 * 12
+
 LANGUAGE_CODE = "sk"
 TIME_ZONE = "Europe/Bratislava"
 USE_I18N = True

@@ -16,6 +16,7 @@ pygments = "^2.16.1"
 celery = "^5.3.5"
 redis = "^5.0.1"
 gunicorn = "^21.2.0"
+mozilla-django-oidc = "^3.0.0"
 
 [build-system]
 requires = ["poetry-core"]

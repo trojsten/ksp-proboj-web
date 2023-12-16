@@ -29,6 +29,8 @@ services:
       - db
       - redis
     command: "./start.sh dev"
+    env_file:
+      - .env
 
   worker:
     build:
