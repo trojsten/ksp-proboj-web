@@ -81,6 +81,7 @@ class LeaderboardView(GameMixin, TemplateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["scores"] = get_leaderboard(self.game)
+        ctx["show_profile"] = settings.USE_OIDC
         return ctx
 
 
