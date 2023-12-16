@@ -87,7 +87,7 @@ class LeaderboardView(GameMixin, TemplateView):
 
 def get_scores_and_timestamps(game, bots):
     timestamps = []
-    datapoints = defaultdict(lambda: [])
+    datapoints: dict[int, list[int]] = defaultdict(lambda: [])
     total_score = defaultdict(lambda: 0)
 
     matches = (
@@ -140,7 +140,10 @@ class ScoreDerivationChartView(GameMixin, View):
         datapoints, timestamps = get_scores_and_timestamps(self.game, bots)
 
         diff = 50
-        derivations = {bot: [0] * diff for bot in datapoints}
+        if len(timestamps) <= diff:
+            return JsonResponse({"series": []})
+
+        derivations = defaultdict(lambda: [0.0] * diff)
         for bot in datapoints:
             for i in range(diff, len(datapoints[bot])):
                 derivations[bot].append(
