@@ -4,7 +4,7 @@
 {% block title %}{{ game.name }} {{ block.super }}{% endblock %}
 
 {% block content %}
-    <div class="prose prose-green mx-auto">
+    <div class="prose prose-green mx-auto dark:prose-invert">
         {{ game.rules | markdown }}
     </div>
 {% endblock %}

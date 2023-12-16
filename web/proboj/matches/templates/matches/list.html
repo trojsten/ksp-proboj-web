@@ -6,7 +6,7 @@
     <h1 class="font-semibold text-3xl mb-4">Odohrané zápasy</h1>
 
     <table class="w-full text-sm">
-        <thead class="bg-green-100 text-green-800 border-green-800 border-b">
+        <thead class="bg-green-100 text-green-800 border-green-800 border-b dark:bg-green-900 dark:text-green-400 dark:border-green-600">
             <tr>
                 <th class="p-2 text-left">#</th>
                 <th class="p-2 text-left">Stav</th>
@@ -16,9 +16,9 @@
             </tr>
         </thead>
 
-        <tbody class="divide-y divide-green-800/30">
+        <tbody class="divide-y divide-green-800/30 dark:divide-green-800/70">
             {% for match in match_list %}
-            <tr class="{% cycle "" "bg-green-50" %} group">
+            <tr class="even:bg-green-50 dark:even:bg-green-950 group">
                 <td class="p-2 tabular-nums">{{ match.id }}</td>
                 <td class="p-2">
                     {% if match.is_finished %}

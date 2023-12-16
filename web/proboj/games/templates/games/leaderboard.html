@@ -5,18 +5,19 @@
 
 {% block extrahead %}
     <script src="{% static "vendor/echarts.min.js" %}"></script>
+    <script src="{% static "vendor/echarts-dark.js" %}"></script>
 {% endblock %}
 
 {% block content %}
     <h2 class="font-semibold text-3xl mb-4">Graf skóre</h2>
     <div class="mb-4 w-full h-[24rem]" id="score-chart"></div>
 
-    <h2 class="font-semibold text-3xl mb-4">Derivácia skóre</h2>
+    <h2 class="font-semibold text-3xl mb-4">Priemerné skóre za posledných 50 hier</h2>
     <div class="mb-4 w-full h-[24rem]" id="score-derivation-chart"></div>
 
     <h2 class="font-semibold text-3xl mb-4">Leaderboard</h2>
     <table class="w-full text-sm">
-        <thead class="bg-green-100 text-green-800 border-green-800 border-b">
+        <thead class="bg-green-100 text-green-800 border-green-800 border-b dark:bg-green-900 dark:text-green-400 dark:border-green-600">
             <tr>
                 <th class="p-2 text-left">#</th>
                 <th class="p-2 text-left">Bot</th>
@@ -24,9 +25,9 @@
             </tr>
         </thead>
 
-        <tbody class="divide-y divide-green-800/30">
+        <tbody class="divide-y divide-green-800/30 dark:divide-green-800/70">
             {% for score in scores %}
-            <tr class="even:bg-green-50 group {% if score.bot_version__bot__user__username == user.username %}bg-yellow-100{% endif %}">
+            <tr class="even:bg-green-50 dark:even:bg-green-950 group {% if score.bot_version__bot__user__username == user.username %}bg-yellow-100 dark:bg-yellow-400/10{% endif %}">
                 <td class="p-2">
                     {{ forloop.counter }}.
                 </td>
@@ -45,48 +46,54 @@
     <meta http-equiv="refresh" content="300">
 
     <script>
-      var chartOptions = {
-          xAxis: {type: 'time'},
-          tooltip: {
-              trigger: 'axis',
-              order: 'valueDesc'
-          },
-          yAxis: {},
-          dataZoom: [
-            {
-              type: 'slider',
-              show: true,
+        var theme = "light"
+
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            theme = "dark"
+        }
+
+        var chartOptions = {
+            xAxis: {type: 'time'},
+            tooltip: {
+                trigger: 'axis',
+                order: 'valueDesc'
             },
-          ],
-          legend: {
-            type:"scroll",
-          },
-          grid: {
-              left: 100,
-              right: 10,
-              top: 50,
-              bottom: 50
-          }
-      };
+            yAxis: {},
+            dataZoom: [
+                {
+                    type: 'slider',
+                    show: true,
+                },
+            ],
+            legend: {
+                type: "scroll",
+            },
+            grid: {
+                left: 100,
+                right: 10,
+                top: 50,
+                bottom: 50
+            }
+        };
 
-      var scoreChart = echarts.init(document.getElementById('score-chart'));
-      scoreChart.setOption(chartOptions);
+        var scoreChart = echarts.init(document.getElementById('score-chart'), theme);
+        scoreChart.setOption(chartOptions);
 
-      var derivationChart = echarts.init(document.getElementById('score-derivation-chart'));
-      derivationChart.setOption(chartOptions);
+        var derivationChart = echarts.init(document.getElementById('score-derivation-chart'), theme);
+        derivationChart.setOption(chartOptions);
 
-      fetch("{% url 'game_score_chart' game=game.id %}").then(res => res.json()).then(data => {
-          console.log(data)
-          scoreChart.setOption({
-              series: data.series,
-          })
-      })
+        fetch("{% url 'game_score_chart' game=game.id %}").then(res => res.json()).then(data => {
+            console.log(data)
+            scoreChart.setOption({
+                series: data.series,
+            })
+        })
 
-      fetch("{% url 'game_score_derivation_chart' game=game.id %}").then(res => res.json()).then(data => {
-          console.log(data)
-          derivationChart.setOption({
-              series: data.series,
-          })
-      })
+        fetch("{% url 'game_score_derivation_chart' game=game.id %}").then(res => res.json()).then(data => {
+            console.log(data)
+            derivationChart.setOption({
+                series: data.series,
+            })
+        })
     </script>
 {% endblock %}

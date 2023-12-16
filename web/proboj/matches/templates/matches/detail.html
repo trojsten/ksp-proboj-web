@@ -10,7 +10,7 @@
             <h2 class="font-semibold text-xl mb-4">Skóre</h2>
 
             <table class="w-full text-sm">
-                <thead class="bg-green-100 text-green-800 border-green-800 border-b">
+                <thead class="bg-green-100 text-green-800 border-green-800 border-b dark:bg-green-900 dark:text-green-400 dark:border-green-600">
                     <tr>
                         <th class="p-2 text-left">#</th>
                         <th class="p-2 text-left">Hráč</th>
@@ -18,9 +18,9 @@
                     </tr>
                 </thead>
 
-                <tbody class="divide-y divide-green-800/30">
+                <tbody class="divide-y divide-green-800/30 dark:divide-green-800/70">
                     {% for bot in match.matchbot_set.all %}
-                    <tr class="{% cycle "" "bg-green-50" %} group">
+                    <tr class="even:bg-green-50 dark:even:bg-green-950 group">
                         <td class="p-2">{% ifchanged bot.score %}{{ forloop.counter }}{% endifchanged %}</td>
                         <td class="p-2 w-full">{{ bot.bot_version.bot }}</td>
                         <td class="p-2 text-right tabular-nums">{{ bot.score }}</td>
@@ -48,8 +48,10 @@
                 {% endif %}
 
                 {% for bot in match.matchbot_set.all %}
-                    {% if user.is_staff or bot.bot_version.bot.user == user %}
-                    <a href="{{ bot.log.url }}" class="btn">{{ bot.bot_version.bot }}</a>
+                    {% if bot.log %}
+                        {% if user.is_staff or bot.bot_version.bot.user == user %}
+                        <a href="{{ bot.log.url }}" class="btn">{{ bot.bot_version.bot }}</a>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             </div>
