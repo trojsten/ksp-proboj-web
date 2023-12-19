@@ -25,9 +25,12 @@ def generate_config(match_dir: Path, players: list[dict], timeout: dict, logs: b
             player_py = player_file.with_suffix(".py")
             player_cmd = f"/usr/bin/pypy3 {player_py}"
 
-        # todo: start wrapper
+        wrapper_cmd = (
+            f"/home/executor/.local/bin/parent --memory 200000 --processes 1 "
+            f"--fs-readonly /usr --fs-readonly {player_file.parent}"
+        )
         config["players"][player["name"]] = {
-            "command": player_cmd,
+            "command": f"{wrapper_cmd} -- {player_cmd}",
             "language": player["language"],
         }
 
