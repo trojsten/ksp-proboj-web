@@ -15,7 +15,7 @@ from django.views.generic import DetailView, ListView, TemplateView
 from proboj.bots.models import Bot
 from proboj.games.leaderboard import get_leaderboard
 from proboj.games.mixins import GameMixin
-from proboj.games.models import Game
+from proboj.games.models import Game, Page
 from proboj.matches.models import Match
 
 
@@ -27,6 +27,13 @@ class HomeView(ListView):
 class GameDetailView(DetailView):
     model = Game
     template_name = "games/detail.html"
+
+
+class GamePageView(GameMixin, DetailView):
+    template_name = "games/page.html"
+
+    def get_queryset(self):
+        return Page.objects.filter(game=self.game)
 
 
 class AutoPlayView(GameMixin, TemplateView):

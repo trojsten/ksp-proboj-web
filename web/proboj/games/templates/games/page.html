@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% load markdown %}
+
+{% block title %}{{ page.name }} - {{ game.name }} {{ block.super }}{% endblock %}
+
+{% block content %}
+    <div class="prose prose-green mx-auto dark:prose-invert">
+        {{ page.content | markdown }}
+    </div>
+{% endblock %}

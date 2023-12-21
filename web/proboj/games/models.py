@@ -19,6 +19,10 @@ def _game_bundle(instance: "Game", filename: str):
     return _game_path(instance, "bundle", filename)
 
 
+def _game_template(instance: "Game", filename: str):
+    return _game_path(instance, "template", filename)
+
+
 class Game(models.Model):
     name = models.CharField(max_length=128)
     start_at = models.DateTimeField()
@@ -33,6 +37,10 @@ class Game(models.Model):
         storage=OverwriteStorage(), upload_to=_game_bundle, blank=True
     )
     bundle_version = models.CharField(max_length=64, blank=True)
+
+    template = models.FileField(
+        storage=OverwriteStorage(), upload_to=_game_template, blank=True
+    )
 
     bot_timeout = models.JSONField(default=dict)
     auto_play = models.IntegerField(default=0)
@@ -57,6 +65,19 @@ class Configuration(models.Model):
     args = models.TextField(blank=True)
     max_bots = models.IntegerField(null=True, blank=True)
     is_enabled = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["game", "name"]
+
+    def __str__(self):
+        return self.name
+
+
+class Page(models.Model):
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    name = models.CharField(max_length=128)
+    slug = models.SlugField(max_length=128)
+    content = models.TextField(blank=True)
 
     class Meta:
         ordering = ["game", "name"]
