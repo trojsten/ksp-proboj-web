@@ -1,4 +1,4 @@
-FROM golang:1.21.4-bookworm as build
+FROM docker.io/library/golang:1.21.4-bookworm as build
 
 WORKDIR /work
 RUN git clone https://github.com/trojsten/ksp-proboj.git .
@@ -6,7 +6,7 @@ RUN git clone https://github.com/trojsten/ksp-proboj.git .
 WORKDIR /work/runner
 RUN go build -o ../output .
 
-FROM debian:12-slim
+FROM docker.io/library/debian:12-slim
 
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt update \
