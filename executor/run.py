@@ -1,5 +1,4 @@
 import logging
-import os
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -18,10 +17,10 @@ class CPULock:
     lock: FileLock
 
 
-def select_cpu(lock_root: Path) -> CPULock:
+def select_cpu(lock_root: Path, pin_cpu: dict) -> CPULock:
     logger.debug("Acquiring lock for a CPU core.")
     while True:
-        for i in range(os.cpu_count()):
+        for i in range(pin_cpu["min"], pin_cpu["max"] + 1):
             fl = FileLock(lock_root / str(i))
             try:
                 fl.acquire(blocking=False)
@@ -43,7 +42,7 @@ def start_match(
     with PodmanClient(base_url=podman_url) as podman:
         cpu = None
         if pin_cpu["min"] != -1 and pin_cpu["max"] != -1:
-            cpu = select_cpu(lock_root)
+            cpu = select_cpu(lock_root, pin_cpu)
 
         try:
             kwargs = {

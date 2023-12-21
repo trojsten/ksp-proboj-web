@@ -35,7 +35,7 @@ def report_result(url: str, match_dir: Path, success: bool, players: list[str]):
     if observer_log:
         files["observer_log"] = observer_log.open("rb")
 
-    log_zip = out_dir / ".player_logs.zip"
+    log_zip = out_dir.parent / ".player_logs.zip"
     with ZipFile(log_zip, "w") as zipf:
         for player in players:
             player_log = get_log(out_dir / "logs" / player)
