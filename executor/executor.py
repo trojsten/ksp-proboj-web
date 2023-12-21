@@ -77,7 +77,6 @@ def run_match(
 
     with tempfile.TemporaryDirectory(prefix="proboj_executor_") as match_dir:
         match_dir = Path(match_dir)
-        match_dir.chmod(0o777)
         generate_config(match_dir, players, timeout, CONFIG["executor"]["logs"])
         generate_games(match_dir, players, args)
 

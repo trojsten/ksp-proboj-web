@@ -2,6 +2,7 @@ import logging
 import time
 from dataclasses import dataclass
 from pathlib import Path
+import os
 
 from filelock import FileLock, Timeout
 from podman import PodmanClient
@@ -75,6 +76,7 @@ def start_match(
                 ],
                 "network_mode": "none",
                 "userns_mode": "keep-id",
+                "user": f"{os.getuid()}:{os.getgid()}",
             }
             if cpu:
                 kwargs["cpuset_cpus"] = str(cpu.cpu)

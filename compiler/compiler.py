@@ -6,6 +6,7 @@ from pathlib import Path
 from zipfile import ZipFile
 
 import requests
+import os
 import yaml
 from celery import Celery
 from celery.utils.log import get_task_logger
@@ -44,7 +45,6 @@ def compile_player(source_url: str, language: str, report_url: str):
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmpdir_path = Path(tmpdir)
-        tmpdir_path.chmod(0o777)
         player_output = tmpdir_path / "player"
 
         src = download_sources(source_url)
@@ -100,6 +100,7 @@ def compile_sources(dir: Path, language: str) -> CompilerOutput:
             ],
             network_mode="none",
             userns_mode="keep-id",
+            user=f"{os.getuid()}:{os.getgid()}",
         )
 
         exitcode = -1
