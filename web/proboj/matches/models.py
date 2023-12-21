@@ -51,14 +51,21 @@ class Match(models.Model):
 
         s = Signer()
 
+        server_url = (
+            settings.BASE_URL + self.game.server.url + "?v=" + self.game.server_version
+        )
+        bundle_url = (
+            settings.BASE_URL + self.game.bundle.url + "?v=" + self.game.bundle_version
+        )
+
         current_app.send_task(
             "executor.run_match",
             queue="execute",
             kwargs={
                 "game_id": self.game_id,
-                "server_url": settings.BASE_URL + self.game.server.url,
+                "server_url": server_url,
                 "server_version": self.game.server_version,
-                "bundle_url": settings.BASE_URL + self.game.bundle.url,
+                "bundle_url": bundle_url,
                 "bundle_version": self.game.bundle_version,
                 "players": [
                     {
