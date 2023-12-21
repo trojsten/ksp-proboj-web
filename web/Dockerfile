@@ -31,6 +31,6 @@ RUN poetry install --no-root
 
 USER appuser
 
-COPY . /app/
-COPY --from=cssbuild /app/proboj/theme/static /app/proboj/theme/static
+COPY --chown=appuser:appuser . /app/
+COPY --chown=appuser:appuser --from=cssbuild /app/proboj/theme/static /app/proboj/theme/static
 CMD ["/app/start.sh"]
