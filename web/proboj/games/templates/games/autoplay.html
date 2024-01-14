@@ -11,11 +11,11 @@
                 {% for score in scores %}
                 <div class="px-4 py-2 text-sm flex items-center justify-between">
                     <div>
-                        {{ score.bot_version__bot__name }}
+                        {{ score.0.name }}
                     </div>
 
                     <div class="shrink-0">
-                        {{ score.total|floatformat:"g" }}
+                        {{ score.1|floatformat:"g" }}
                     </div>
                 </div>
                 {% endfor %}

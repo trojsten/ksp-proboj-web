@@ -27,17 +27,17 @@
 
         <tbody class="divide-y divide-green-800/30 dark:divide-green-800/70">
             {% for score in scores %}
-            <tr class="group even:bg-green-50 dark:even:bg-green-950 {% if score.bot_version__bot__user__username == user.username %}text-yellow-400{% else %}{% endif %}">
+            <tr class="group even:bg-green-50 dark:even:bg-green-950 {% if score.0.user == user %}text-yellow-400{% endif %}">
                 <td class="p-2">
                     {{ forloop.counter }}.
                 </td>
                 <td class="p-2 w-full">
-                    {{ score.bot_version__bot__name }}
+                    {{ score.0.name }}
                     {% if show_profile %}
-                        (<a class="underline text-green-600 hover:text-green-700" target="_blank" href="https://id.trojsten.sk/profile/{{ score.bot_version__bot__user__username }}/">{{ score.bot_version__bot__user__first_name }} {{ score.bot_version__bot__user__last_name }}</a>)
+                        (<a class="underline text-green-600 hover:text-green-700" target="_blank" href="https://id.trojsten.sk/profile/{{ score.0.user.username }}/">{{ score.0.user.first_name }} {{ score.0.user.last_name }}</a>)
                     {% endif %}
                 </td>
-                <td class="p-2 tabular-nums text-right">{{ score.total|floatformat:"g" }}</td>
+                <td class="p-2 tabular-nums text-right">{{ score.1|floatformat:"g" }}</td>
             </tr>
             {% endfor %}
         </tbody>

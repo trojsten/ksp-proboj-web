@@ -65,7 +65,7 @@ class AutoPlayView(GameMixin, TemplateView):
             .first()
         )
         ctx["match"] = match
-        ctx["scores"] = get_leaderboard(self.game, self.ts)[0:10]
+        ctx["scores"] = get_leaderboard(self.game)[0:10]
 
         if match:
             observer_file = match.observer_log.url
@@ -92,7 +92,7 @@ class LeaderboardView(GameMixin, TemplateView):
         return ctx
 
 
-def get_scores_and_timestamps(game, bots):
+def get_scores_and_timestamps(game, bots, scale=True):
     timestamps = []
     datapoints: dict[int, list[int]] = defaultdict(lambda: [])
     total_score = defaultdict(lambda: 0)
@@ -107,6 +107,8 @@ def get_scores_and_timestamps(game, bots):
     for match in matches:
         timestamps.append(match.finished_at.strftime("%Y-%m-%d %H:%M:%S.%f"))
         for bot in bots:
+            if scale:
+                total_score[bot.id] = round(total_score[bot.id] * 0.999)
             datapoints[bot.id].append(total_score[bot.id])
 
         for bot in match.matchbot_set.all():
@@ -144,7 +146,7 @@ class ScoreChartView(GameMixin, View):
 class ScoreDerivationChartView(GameMixin, View):
     def get(self, request, *args, **kwargs):
         bots = Bot.objects.filter(game=self.game, is_enabled=True).order_by("name")
-        datapoints, timestamps = get_scores_and_timestamps(self.game, bots)
+        datapoints, timestamps = get_scores_and_timestamps(self.game, bots, False)
 
         diff = 50
         if len(timestamps) <= diff:
