@@ -3,12 +3,18 @@ from django.urls import path
 from proboj.matches.views import (
     MatchConfigView,
     MatchDetailView,
+    MatchListApiView,
     MatchListView,
     MatchUploadView,
 )
 
 urlpatterns = [
     path("games/<int:game>/matches/", MatchListView.as_view(), name="match_list"),
+    path(
+        "games/<int:game>/matches.json",
+        MatchListApiView.as_view(),
+        name="match_list_json",
+    ),
     path(
         "games/<int:game>/matches/<int:pk>/",
         MatchDetailView.as_view(),

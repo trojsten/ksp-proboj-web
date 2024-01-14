@@ -3,6 +3,7 @@ from zipfile import BadZipFile, ZipFile
 
 from django.core.exceptions import BadRequest
 from django.core.files.base import ContentFile
+from django.core.paginator import Paginator
 from django.core.signing import BadSignature, Signer
 from django.db import transaction
 from django.http import Http404, HttpResponse, JsonResponse
@@ -30,6 +31,38 @@ class MatchListView(GameMixin, ListView):
             .select_related("configuration")
             .prefetch_related("matchbot_set", "matchbot_set__bot_version__bot")
         )
+
+
+class MatchListApiView(GameMixin, View):
+    template_name = "matches/list.html"
+
+    def get(self, request, *args, **kwargs):
+        matches = (
+            Match.objects.filter(game=self.game)
+            .order_by("-created_at")
+            .select_related("configuration")
+            .prefetch_related("matchbot_set", "matchbot_set__bot_version__bot")
+        )
+        paginator = Paginator(matches, 200)
+        page = paginator.get_page(request.GET.get("page"))
+        data = []
+        for match in page:
+            data.append(
+                {
+                    "id": match.id,
+                    "configuration": match.configuration.name,
+                    "finished_at": match.finished_at,
+                    "score": {
+                        s.bot_version.bot.name: s.score
+                        for s in match.matchbot_set.all()
+                    },
+                    "observer_log": match.observer_log.url
+                    if match.observer_log
+                    else None,
+                    "server_log": match.server_log.url if match.server_log else None,
+                }
+            )
+        return JsonResponse({"matches": data})
 
 
 class MatchDetailView(GameMixin, DetailView):
