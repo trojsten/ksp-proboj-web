@@ -1,0 +1,28 @@
+<table class="w-full text-sm">
+    <thead class="bg-green-100 text-green-800 border-green-800 border-b dark:bg-green-900 dark:text-green-400 dark:border-green-600">
+    <tr>
+        <th class="p-2 text-left">#</th>
+        <th class="p-2 text-left">Body</th>
+        <th class="p-2"></th>
+    </tr>
+    </thead>
+
+    <tbody class="divide-y divide-green-800/30 dark:divide-green-800/70">
+    {% for match in matches %}
+        <tr class="even:bg-green-50 dark:even:bg-green-950 group">
+            <td class="p-2 tabular-nums">{{ match.id }}</td>
+            <td class="p-2">
+                {% for mbot in match.matchbot_set.all %}
+                    {% if mbot.score is not None %}<span class="{% if mbot.bot_version.bot.user == user %}text-yellow-400{% endif %}">{{ mbot.bot_version.bot }}: {{ mbot.score|floatformat:"g" }}</span>{% if not forloop.last %},{% endif %}{% endif %}
+                {% endfor %}
+            </td>
+            <td class="p-2 whitespace-nowrap text-xs opacity-40 group-hover:opacity-100 text-right">
+                {% if match.observer_log %}
+                <a href="{{ OBSERVER_URL }}/{{ match.game_id }}/?file={{ match.observer_log.url|urlencode }}" class="underline text-green-600 hover:text-green-700">Prehrať</a> &middot;
+                {% endif %}
+                <a href="{% url "match_detail" game=game.id pk=match.id %}" class="underline text-green-600 hover:text-green-700">Detail</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

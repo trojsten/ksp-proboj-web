@@ -12,6 +12,7 @@ from proboj.bots.forms import BotForm, BotUploadForm, CompileUploadForm
 from proboj.bots.mixins import BotMixin, BotQuerySetMixin
 from proboj.bots.models import Bot, BotVersion
 from proboj.games.mixins import GameMixin
+from proboj.matches.models import Match
 
 
 class BotListView(LoginRequiredMixin, BotQuerySetMixin, GameMixin, ListView):
@@ -29,6 +30,18 @@ class BotDetailView(LoginRequiredMixin, BotQuerySetMixin, GameMixin, DetailView)
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["versions"] = self.object.botversion_set.all()
+        ctx["matches"] = (
+            Match.objects.filter(
+                matchbot__bot_version__bot=self.object, finished_at__isnull=False
+            )
+            .order_by("-finished_at")
+            .prefetch_related(
+                "matchbot_set",
+                "matchbot_set__bot_version",
+                "matchbot_set__bot_version__bot",
+            )
+            .all()[0:15]
+        )
         ctx["can_upload"] = self.game.is_open
         return ctx
 
