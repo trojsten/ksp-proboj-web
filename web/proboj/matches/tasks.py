@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from celery import shared_task
 
 from proboj.games.models import Game
@@ -19,3 +21,34 @@ def enqueue_matches():
         for plan in plans:
             match = plan.save()
             match.enqueue()
+
+
+@shared_task
+def delete_old_matches():
+    games = Game.objects.all()
+    for game in games:
+        last_match = (
+            Match.objects.filter(game=game, finished_at__isnull=False)
+            .order_by("-finished_at")
+            .first()
+        )
+        if not last_match:
+            continue
+
+        older_than_week = Match.objects.filter(
+            game=game, finished_at__lte=last_match.finished_at - timedelta(days=7)
+        ).prefetch_related("matchbot_set")
+        for match in older_than_week:
+            if match.server_log:
+                match.server_log.delete()
+
+            for bot in match.matchbot_set.all():
+                if bot.log:
+                    bot.log.delete()
+
+        older_than_month = Match.objects.filter(
+            game=game, finished_at__lte=last_match.finished_at - timedelta(days=30)
+        )
+        for match in older_than_month:
+            if match.observer_log:
+                match.observer_log.delete()

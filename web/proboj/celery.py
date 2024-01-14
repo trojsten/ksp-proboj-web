@@ -18,6 +18,10 @@ app.conf.beat_schedule = {
         "task": "proboj.matches.tasks.enqueue_matches",
         "schedule": 15.0,
     },
+    "delete-old-matches": {
+        "task": "proboj.matches.tasks.delete_old_matches",
+        "schedule": 60 * 60,
+    },
 }
 
 # Load task modules from all registered Django apps.
