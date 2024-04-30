@@ -37,7 +37,7 @@ validate_bot_name = RegexValidator(
 class Bot(models.Model):
     game = models.ForeignKey("games.Game", on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    name = models.CharField(max_length=64, validators=[validate_slug])
+    name = models.CharField(max_length=64, validators=[validate_bot_name])
     is_enabled = models.BooleanField(default=True)
 
     class Meta:
