@@ -84,7 +84,8 @@ def run_match(
 
         try:
             report_result(
-                report_url, match_dir, successful, [pl["name"] for pl in players]
+                report_url, match_dir, successful, [pl["name"] for pl in players],
+                processes_per_player,
             )
         except Exception as e:
             self.retry(exc=e)

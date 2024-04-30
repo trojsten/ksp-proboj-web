@@ -10,13 +10,29 @@ def get_log(path: Path) -> Path | None:
     path_txt = path.with_suffix(".txt")
     if path_txt.exists():
         return path_txt
+    path_zip = path.with_suffix(".zip")
+    if path_zip.exists():
+        return path_zip
     path_gz = path.with_suffix(".gz")
     if path_gz.exists():
         return path_gz
     return None
 
 
-def report_result(url: str, match_dir: Path, success: bool, players: list[str]):
+def _add_player_log(zipf: ZipFile, out_dir: Path, player: str, processes_per_player: int):
+    if processes_per_player != 1:
+        with ZipFile(out_dir / "logs" / f"{player}.zip", "w") as outf:
+            for i in range(processes_per_player):
+                log = get_log(out_dir / "logs" / f"{player}_{i}")
+                if log:
+                    outf.write(log, f"{i}{log.suffix}")
+
+    player_log = get_log(out_dir / "logs" / player)
+    if player_log:
+        zipf.write(player_log, f"{player}{player_log.suffix}")
+
+
+def report_result(url: str, match_dir: Path, success: bool, players: list[str], processes_per_player: int):
     out_dir = match_dir / "run"
 
     data = {"successful": success}
@@ -38,9 +54,7 @@ def report_result(url: str, match_dir: Path, success: bool, players: list[str]):
     log_zip = out_dir.parent / ".player_logs.zip"
     with ZipFile(log_zip, "w") as zipf:
         for player in players:
-            player_log = get_log(out_dir / "logs" / player)
-            if player_log:
-                zipf.write(player_log, f"{player}{player_log.suffix}")
+            _add_player_log(zipf, out_dir, player, processes_per_player)
     files["bot_logs"] = log_zip.open("rb")
 
     try:
