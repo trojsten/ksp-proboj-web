@@ -42,6 +42,7 @@ class Game(models.Model):
         storage=OverwriteStorage(), upload_to=_game_template, blank=True
     )
 
+    processes_per_bot = models.IntegerField(default=1)
     bot_timeout = models.JSONField(default=dict)
     auto_play = models.IntegerField(default=0)
     max_bots = models.IntegerField(default=0)

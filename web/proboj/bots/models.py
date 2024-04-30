@@ -1,9 +1,10 @@
 import os.path
+import re
 import secrets
 
 from celery import current_app
 from django.conf import settings
-from django.core.validators import FileExtensionValidator, validate_slug
+from django.core.validators import FileExtensionValidator, validate_slug, RegexValidator
 from django.db import models
 from django.db.models import UniqueConstraint
 from django.urls import reverse
@@ -24,6 +25,13 @@ def bot_version_compiled(instance: "BotVersion", filename):
 
 def bot_secret():
     return secrets.token_hex(16)
+
+
+validate_bot_name = RegexValidator(
+    re.compile(r"^[-a-zA-Z0-9]+\Z"),
+    "Neplatné meno bota.",
+    "invalid",
+)
 
 
 class Bot(models.Model):

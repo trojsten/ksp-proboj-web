@@ -78,6 +78,7 @@ class Match(models.Model):
                         "bot_version", "bot_version__bot"
                     ).all()
                 ],
+                "processes_per_player": self.game.processes_per_bot,
                 "args": self.configuration.args,
                 "report_url": settings.BASE_URL
                 + reverse(

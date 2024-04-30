@@ -23,19 +23,6 @@ app.conf.broker_connection_retry_on_startup = True
 app.config_from_object(CONFIG["celery"])
 
 
-"""
-runtime:
-runner
-
-z webu:
-game id
-url servera + verzia
-url pomocnych suborov + verzia
-url hracov
-zoznam hracov
-"""
-
-
 @app.task(bind=True)
 def run_match(
     self,
@@ -45,6 +32,7 @@ def run_match(
     bundle_url: str,
     bundle_version: str,
     players: list[dict],
+    processes_per_player: int,
     args: str,
     report_url: str,
     timeout: dict,
@@ -77,7 +65,7 @@ def run_match(
 
     with tempfile.TemporaryDirectory(prefix="proboj_executor_") as match_dir:
         match_dir = Path(match_dir)
-        generate_config(match_dir, players, timeout, CONFIG["executor"]["logs"])
+        generate_config(match_dir, players, processes_per_player, timeout, CONFIG["executor"]["logs"])
         generate_games(match_dir, players, args)
 
         successful = False

@@ -7,10 +7,11 @@ from celery.utils.log import get_task_logger
 logger: logging.Logger = get_task_logger(__name__)
 
 
-def generate_config(match_dir: Path, players: list[dict], timeout: dict, logs: bool):
+def generate_config(match_dir: Path, players: list[dict], processes_per_player: int, timeout: dict, logs: bool):
     config = {
         "server": "/server/bin",
         "players": {},
+        "processes_per_player": processes_per_player,
         "timeout": timeout,
         "disable_logs": not logs,
         "game_root": "/match",
