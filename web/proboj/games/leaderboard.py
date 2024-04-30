@@ -33,7 +33,8 @@ def get_leaderboard(game: Game):
 
         for mbot in match.matchbot_set.all():
             mbot: MatchBot
-            scores[mbot.bot_version.bot] += mbot.score
+            if mbot.score is not None:
+                scores[mbot.bot_version.bot] += mbot.score
 
     leaderboard = list(scores.items())
     leaderboard.sort(key=lambda x: -x[1])
