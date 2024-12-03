@@ -44,6 +44,7 @@ def generate_matches(game: Game, number: int = 1) -> list[MatchPlan]:
     matches = []
     for i in range(number):
         config: Configuration = random.choice(configurations)
+        bot_count = len(latest_versions)
         if config.max_bots and bot_count > config.max_bots:
             bot_count = config.max_bots
         bots: list[BotVersion] = random.sample(latest_versions, k=bot_count)
