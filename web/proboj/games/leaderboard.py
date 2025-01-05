@@ -29,14 +29,14 @@ def get_leaderboard(game: Game):
     scores = defaultdict(lambda: 0)
     for match in matches:
         for k in scores.keys():
-            scores[k] = round(scores[k] * 0.999)
+            scores[k] *= 0.999
 
         for mbot in match.matchbot_set.all():
             mbot: MatchBot
             if mbot.score is not None:
                 scores[mbot.bot_version.bot] += mbot.score
 
-    leaderboard = list(scores.items())
+    leaderboard = [(x[0], round(x[1])) for x in scores.items()]
     leaderboard.sort(key=lambda x: -x[1])
     cache.set(key, leaderboard, 60 * 5)
     return leaderboard
