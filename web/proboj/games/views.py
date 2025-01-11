@@ -3,6 +3,7 @@ from collections import defaultdict
 from datetime import datetime
 
 from django.conf import settings
+from django.db.models import Prefetch
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.utils import timezone
@@ -11,12 +12,13 @@ from django.utils.timezone import make_aware
 from django.views import View
 from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, ListView, TemplateView
+from django.views.generic import DetailView, ListView, TemplateView
 
-from proboj.bots.models import Bot
+from proboj.bots.models import Bot, BotVersion
 from proboj.games.leaderboard import get_leaderboard
 from proboj.games.mixins import GameMixin
 from proboj.games.models import Game, Page
-from proboj.matches.models import Match
+from proboj.matches.models import Match, MatchBot
 
 
 class HomeView(ListView):
@@ -73,10 +75,11 @@ class AutoPlayView(GameMixin, TemplateView):
                 reverse("game_autoplay", kwargs={"game": self.game.id})
                 + f"?since={match.finished_at.timestamp()}"
             )
-            ctx[
-                "observer"
-            ] = f"{settings.OBSERVER_URL}/{self.game.id}/?" + urllib.parse.urlencode(
-                {"file": observer_file, "autoplay": "1", "back": return_url}
+            ctx["observer"] = (
+                f"{settings.OBSERVER_URL}/{self.game.id}/?"
+                + urllib.parse.urlencode(
+                    {"file": observer_file, "autoplay": "1", "back": return_url}
+                )
             )
 
         return ctx
@@ -94,29 +97,55 @@ class LeaderboardView(GameMixin, TemplateView):
 
 def get_scores_and_timestamps(game, bots, scale=True):
     timestamps = []
-    datapoints: dict[int, list[int]] = defaultdict(lambda: [])
-    total_score = defaultdict(lambda: 0)
+    datapoints: dict[int, list[float]] = defaultdict(lambda: [0.0])
 
     matches = (
         Match.objects.filter(game=game, is_finished=True, failed=False)
-        .prefetch_related("matchbot_set", "matchbot_set__bot_version")
+        .prefetch_related(
+            Prefetch(
+                "matchbot_set",
+                queryset=MatchBot.objects.filter(score__gt=0)
+                .order_by()
+                .only("score", "match_id", "bot_version"),
+            ),
+            Prefetch(
+                "matchbot_set__bot_version",
+                queryset=BotVersion.objects.filter().order_by().only("bot_id"),
+            ),
+        )
         .order_by("finished_at")
+        .only("finished_at")
     )
+
     if game.score_reset_at and game.score_reset_at < timezone.now():
         matches = matches.filter(finished_at__gte=game.score_reset_at)
-    for match in matches:
-        timestamps.append(match.finished_at.strftime("%Y-%m-%d %H:%M:%S.%f"))
-        for bot in bots:
-            if scale:
-                total_score[bot.id] = total_score[bot.id] * 0.999
-            datapoints[bot.id].append(round(total_score[bot.id]))
 
-        for bot in match.matchbot_set.all():
-            if not bot.score:
-                continue
-            bot_id = bot.bot_version.bot_id
-            total_score[bot_id] += bot.score
-            datapoints[bot_id][-1] = round(total_score[bot_id])
+    multiplier = 0.999 if scale else 1
+
+    matches = list(
+        matches.values(
+            "id",
+            "finished_at",
+            "matchbot__bot_version__bot_id",
+            "matchbot__score",
+        )
+    )
+
+    last_id = matches[0]["id"]
+    timestamps.append(matches[0]["finished_at"].strftime("%Y-%m-%d %H:%M:%S.%f"))
+
+    for match in matches:
+        if match["id"] != last_id:
+            for bot in bots:
+                datapoints[bot.id].append(datapoints[bot.id][-1] * multiplier)
+            timestamps.append(match["finished_at"].strftime("%Y-%m-%d %H:%M:%S.%f"))
+            last_id = match["id"]
+
+        if match["matchbot__score"] is not None:
+            datapoints[match["matchbot__bot_version__bot_id"]][-1] += match[
+                "matchbot__score"
+            ]
+
     return datapoints, timestamps
 
 
@@ -134,7 +163,8 @@ class ScoreChartView(GameMixin, View):
                     "type": "line",
                     "symbol": "none",
                     "data": [
-                        [timestamps[i], d] for i, d in enumerate(datapoints[bot.id])
+                        [timestamps[i], round(d)]
+                        for i, d in enumerate(datapoints[bot.id])
                     ],
                 }
             )
@@ -167,7 +197,8 @@ class ScoreDerivationChartView(GameMixin, View):
                     "type": "line",
                     "symbol": "none",
                     "data": [
-                        [timestamps[i], d] for i, d in enumerate(derivations[bot.id])
+                        [timestamps[i], round(d, 2)]
+                        for i, d in enumerate(derivations[bot.id])
                     ],
                 }
             )
