@@ -9,9 +9,9 @@
         file_server
     }
 
-    handle /observer/* {
-      root * /
-      file_server
+    handle_path /observer/* {
+        root * /app/observer
+        file_server
     }
 
     reverse_proxy 127.0.0.1:8001 {
