@@ -6,7 +6,10 @@ env = Env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = env(
+    "SECRET_KEY",
+    default="django-insecure-airootheesaethahpoo2EeLahze3wooGh9Ash2zae9ohgiengi",
+)
 DEBUG = env("DEBUG", default=False)
 ALLOWED_HOSTS = env("ALLOWED_HOSTS", default=[])
 BASE_URL = env("BASE_URL")
@@ -26,6 +29,7 @@ INSTALLED_APPS = [
     "proboj.bots",
     "proboj.matches",
     #
+    "django_probes",
     "widget_tweaks",
 ]
 

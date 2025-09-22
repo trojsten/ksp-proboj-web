@@ -1,36 +1,26 @@
-FROM node:20.8.0-alpine AS cssbuild
+FROM node:lts-alpine AS cssbuild
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm install
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm && \
+ pnpm install
 
 COPY proboj ./proboj
 COPY tailwind.config.js ./
-RUN npm run build
-CMD ["npm", "run", "dev"]
+RUN pnpm run build
+CMD ["pnpm", "run", "dev"]
 
-FROM python:3.11-slim-bullseye
-WORKDIR /app
-RUN useradd --create-home appuser
+FROM ghcr.io/trojsten/django-docker:v6
 
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONFAULTHANDLER 1
-ENV POETRY_VIRTUALENVS_CREATE 0
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-cache
 
-RUN export DEBIAN_FRONTEND=noninteractive \
-    && apt update \
-    && apt -y upgrade \
-#    && apt -y install nodejs npm \
-    && apt -y clean \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN pip install poetry
-COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-root
-
-USER appuser
-
-COPY --chown=appuser:appuser . /app/
+COPY ./Caddyfile /base/Caddyfile
+COPY --chown=appuser:appuser ./ /app
 COPY --chown=appuser:appuser --from=cssbuild /app/proboj/theme/static /app/proboj/theme/static
-CMD ["/app/start.sh"]
+
+RUN PYTHONDONTWRITEBYTECODE=1 uv run --no-cache pygmentize -S monokai -f html -a .codehilite > /app/proboj/theme/static/code.css
+RUN DATABASE_URL=sqlite://:memory: BASE_URL=:unset: CELERY_BROKER_URL=:unset: python -B manage.py collectstatic --no-input
+
+ENV BASE_START=/app/start.sh

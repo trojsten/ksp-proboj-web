@@ -1,6 +1,5 @@
 x-env: &x-env
   - DEBUG=True
-  - SECRET_KEY=django-insecure-airootheesaethahpoo2EeLahze3wooGh9Ash2zae9ohgiengi
   - DATABASE_URL=postgres://postgres:postgres@db/postgres
   - ALLOWED_HOSTS=localhost
   - CELERY_BROKER_URL=redis://redis
@@ -23,7 +22,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./:/app/
+      - ./proboj:/app/proboj
     environment: *x-env
     depends_on:
       - db
@@ -36,7 +35,7 @@ services:
     build:
       context: .
     volumes:
-      - ./:/app/
+      - ./proboj:/app/proboj
     environment: *x-env
     depends_on:
       - db
@@ -47,7 +46,7 @@ services:
     build:
       context: .
     volumes:
-      - ./:/app/
+      - ./proboj:/app/proboj
     environment: *x-env
     depends_on:
       - db
@@ -55,7 +54,7 @@ services:
     command: "./start.sh beat"
 
   redis:
-    image: redis:7
+    image: redis:8
     ports:
       - "127.0.0.1:6379:6379"
 

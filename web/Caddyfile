@@ -1,18 +1,32 @@
-proboj.ksp.sk:80 {
-  handle /static/* {
-    root * /
-    file_server
-  }
+:8000 {
+    handle_path /static/* {
+        root * /app/static
+        file_server
+    }
 
-  handle /uploads/* {
-    root * /
-    file_server
-  }
+    handle_path /uploads/* {
+        root * /app/uploads
+        file_server
+    }
 
-  handle /observer/* {
-    root * /
-    file_server
-  }
+    handle /observer/* {
+      root * /
+      file_server
+    }
 
-  reverse_proxy web:8000
+    reverse_proxy 127.0.0.1:8001 {
+        trusted_proxies private_ranges
+
+        @accel header X-Sendfile *
+        handle_response @accel {
+            root * /
+            rewrite {rp.header.X-Sendfile}
+            file_server
+
+            @asattachment header X-Sendfile-As-Attachement *
+            header @asattachment {
+                Content-Disposition: attachment
+            }
+        }
+    }
 }
