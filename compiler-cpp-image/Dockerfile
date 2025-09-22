@@ -10,7 +10,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 RUN useradd --create-home compiler
 USER compiler
 
-RUN pipx install parent==25.1
+RUN PIP_NO_CACHE_DIR=off pipx install  parent==25.1
 ENV PATH="/home/compiler/.local/bin/:$PATH"
 COPY compile.sh /home/compiler/.local/bin/compile
 

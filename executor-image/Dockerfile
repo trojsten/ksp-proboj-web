@@ -18,7 +18,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 RUN useradd --create-home executor
 USER executor
 
-RUN pipx install parent==25.1
+RUN PIP_NO_CACHE_DIR=off pipx install parent==25.1
 
 ENV PATH="/home/executor/.local/bin:$PATH"
 COPY --from=build /work/output /home/executor/.local/bin/runner
