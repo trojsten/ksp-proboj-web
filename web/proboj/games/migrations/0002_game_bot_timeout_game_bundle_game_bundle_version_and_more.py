@@ -7,7 +7,6 @@ import proboj.storage
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("games", "0001_initial"),
     ]

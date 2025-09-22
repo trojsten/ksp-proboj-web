@@ -19,7 +19,9 @@ def get_log(path: Path) -> Path | None:
     return None
 
 
-def _add_player_log(zipf: ZipFile, out_dir: Path, player: str, processes_per_player: int):
+def _add_player_log(
+    zipf: ZipFile, out_dir: Path, player: str, processes_per_player: int
+):
     if processes_per_player != 1:
         with ZipFile(out_dir / "logs" / f"{player}.zip", "w") as outf:
             for i in range(processes_per_player):
@@ -32,7 +34,13 @@ def _add_player_log(zipf: ZipFile, out_dir: Path, player: str, processes_per_pla
         zipf.write(player_log, f"{player}{player_log.suffix}")
 
 
-def report_result(url: str, match_dir: Path, success: bool, players: list[str], processes_per_player: int):
+def report_result(
+    url: str,
+    match_dir: Path,
+    success: bool,
+    players: list[str],
+    processes_per_player: int,
+):
     out_dir = match_dir / "run"
 
     data = {"successful": success}

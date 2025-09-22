@@ -4,7 +4,7 @@ import secrets
 
 from celery import current_app
 from django.conf import settings
-from django.core.validators import FileExtensionValidator, validate_slug, RegexValidator
+from django.core.validators import FileExtensionValidator, RegexValidator
 from django.db import models
 from django.db.models import UniqueConstraint
 from django.urls import reverse
@@ -77,6 +77,14 @@ class BotVersion(models.Model):
     def __str__(self):
         return f"{self.bot} v{self.number}"
 
+    def save(self, **kwargs):
+        if self.number is None:
+            last_version = (
+                BotVersion.objects.filter(bot=self.bot).order_by("-number").first()
+            )
+            self.number = last_version.number + 1 if last_version else 1
+        return super().save(**kwargs)
+
     def compile(self):
         if self.language == BotVersion.Language.PYTHON:
             self.compiled = self.sources
@@ -95,11 +103,3 @@ class BotVersion(models.Model):
                 ),
             },
         )
-
-    def save(self, **kwargs):
-        if self.number is None:
-            last_version = (
-                BotVersion.objects.filter(bot=self.bot).order_by("-number").first()
-            )
-            self.number = last_version.number + 1 if last_version else 1
-        return super().save(**kwargs)

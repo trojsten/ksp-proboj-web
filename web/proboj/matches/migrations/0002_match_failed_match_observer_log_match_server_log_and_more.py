@@ -6,7 +6,6 @@ import proboj.matches.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("matches", "0001_initial"),
     ]

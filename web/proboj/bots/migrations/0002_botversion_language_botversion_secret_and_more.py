@@ -6,7 +6,6 @@ import proboj.bots.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bots", "0001_initial"),
     ]

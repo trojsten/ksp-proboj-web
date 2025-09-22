@@ -7,7 +7,6 @@ import proboj.bots.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bots", "0004_botversion_compile_log"),
     ]

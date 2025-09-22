@@ -73,10 +73,11 @@ class AutoPlayView(GameMixin, TemplateView):
                 reverse("game_autoplay", kwargs={"game": self.game.id})
                 + f"?since={match.finished_at.timestamp()}"
             )
-            ctx[
-                "observer"
-            ] = f"{settings.OBSERVER_URL}/{self.game.id}/?" + urllib.parse.urlencode(
-                {"file": observer_file, "autoplay": "1", "back": return_url}
+            ctx["observer"] = (
+                f"{settings.OBSERVER_URL}/{self.game.id}/?"
+                + urllib.parse.urlencode(
+                    {"file": observer_file, "autoplay": "1", "back": return_url}
+                )
             )
 
         return ctx

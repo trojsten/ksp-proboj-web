@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("bots", "0002_botversion_language_botversion_secret_and_more"),
     ]

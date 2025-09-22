@@ -40,6 +40,6 @@ push = true
 "pyproject.toml" = [
     'current_version = "{version}"',
 ]
-"web/__init__.py" = [
+"proboj/__init__.py" = [
     'VERSION = "{version}"',
 ]

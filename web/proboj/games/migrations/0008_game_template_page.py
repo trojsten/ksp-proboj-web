@@ -8,7 +8,6 @@ import proboj.storage
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("games", "0007_game_score_reset_at"),
     ]

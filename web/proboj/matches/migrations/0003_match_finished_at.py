@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("matches", "0002_match_failed_match_observer_log_match_server_log_and_more"),
     ]

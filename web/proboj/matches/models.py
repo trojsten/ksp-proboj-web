@@ -42,6 +42,9 @@ class Match(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
+    def __str__(self):
+        return f"Match {self.pk} of {self.game.name}"
+
     def enqueue(self):
         if self.is_finished:
             return
@@ -97,3 +100,6 @@ class MatchBot(models.Model):
 
     class Meta:
         ordering = ["match", "-score"]
+
+    def __str__(self):
+        return f"{self.bot_version.bot.name} in {self.match}"

@@ -65,7 +65,13 @@ def run_match(
 
     with tempfile.TemporaryDirectory(prefix="proboj_executor_") as match_dir:
         match_dir = Path(match_dir)
-        generate_config(match_dir, players, processes_per_player, timeout, CONFIG["executor"]["logs"])
+        generate_config(
+            match_dir,
+            players,
+            processes_per_player,
+            timeout,
+            CONFIG["executor"]["logs"],
+        )
         generate_games(match_dir, players, args)
 
         successful = False
@@ -84,7 +90,10 @@ def run_match(
 
         try:
             report_result(
-                report_url, match_dir, successful, [pl["name"] for pl in players],
+                report_url,
+                match_dir,
+                successful,
+                [pl["name"] for pl in players],
                 processes_per_player,
             )
         except Exception as e:

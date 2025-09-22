@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("games", "0002_game_bot_timeout_game_bundle_game_bundle_version_and_more"),
     ]

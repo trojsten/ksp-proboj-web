@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('games', '0008_game_template_page'),
+        ("games", "0008_game_template_page"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='game',
-            name='processes_per_bot',
+            model_name="game",
+            name="processes_per_bot",
             field=models.IntegerField(default=1),
         ),
     ]
