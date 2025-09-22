@@ -7,7 +7,7 @@ podman:
 celery:
   # Broker URL
   broker: redis://localhost
-  
+
   # Other Celery options can be set here.
   # https://docs.celeryq.dev/en/stable/userguide/configuration.html#configuration
 
