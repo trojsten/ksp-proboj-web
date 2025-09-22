@@ -6,7 +6,7 @@ RUN git clone https://github.com/trojsten/ksp-proboj.git .
 WORKDIR /work/runner
 RUN go build -o ../output .
 
-FROM docker.io/library/debian:12-slim
+FROM docker.io/library/debian:13-slim
 
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt update \
@@ -18,7 +18,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 RUN useradd --create-home executor
 USER executor
 
-RUN pipx install parent==23.1004
+RUN pipx install parent==25.1
 
 ENV PATH="/home/executor/.local/bin:$PATH"
 COPY --from=build /work/output /home/executor/.local/bin/runner

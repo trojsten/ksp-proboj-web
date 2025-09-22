@@ -1,4 +1,4 @@
-FROM docker.io/library/debian:12-slim
+FROM docker.io/library/debian:13-slim
 
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt update \
@@ -10,7 +10,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
 RUN useradd --create-home compiler
 USER compiler
 
-RUN pipx install parent==23.1004
+RUN pipx install parent==25.1
 ENV PATH="/home/compiler/.local/bin/:$PATH"
 COPY compile.sh /home/compiler/.local/bin/compile
 
