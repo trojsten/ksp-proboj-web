@@ -7,10 +7,10 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt -y clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN useradd --create-home compiler
+RUN useradd --create-home compiler && chmod 755 /home/compiler
 USER compiler
 
-RUN PIP_NO_CACHE_DIR=off pipx install  parent==25.1
+RUN PIP_NO_CACHE_DIR=off pipx install parent==25.1
 ENV PATH="/home/compiler/.local/bin/:$PATH"
 COPY compile.sh /home/compiler/.local/bin/compile
 

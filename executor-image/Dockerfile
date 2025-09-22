@@ -15,7 +15,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt -y clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN useradd --create-home executor
+RUN useradd --create-home executor && chmod 755 /home/executor
 USER executor
 
 RUN PIP_NO_CACHE_DIR=off pipx install parent==25.1
