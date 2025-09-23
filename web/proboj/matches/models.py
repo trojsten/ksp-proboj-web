@@ -99,7 +99,7 @@ class MatchBot(models.Model):
     log = models.FileField(blank=True, upload_to=_match_bot_log)
 
     class Meta:
-        ordering = ["match", "-score"]
+        ordering = ["match", "-score", "id"]  # order by id to maintain consistent order
 
     def __str__(self):
         return f"{self.bot_version.bot.name} in {self.match}"
