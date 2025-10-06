@@ -27,7 +27,7 @@
 
         <tbody class="divide-y divide-green-800/30 dark:divide-green-800/70">
             {% for score in scores %}
-            <tr class="group even:bg-green-50 dark:even:bg-green-950 {% if score.0.user == user %}text-yellow-400{% endif %}">
+            <tr class="group even:bg-green-50 dark:even:bg-green-950 {% if score.0.user.username == user.username %}text-yellow-400{% endif %}">
                 <td class="p-2">
                     {{ forloop.counter }}.
                 </td>
