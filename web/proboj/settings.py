@@ -137,3 +137,19 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Celery
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
+
+dsn = env("SENTRY_DSN", default="")
+if dsn:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    from proboj import VERSION
+
+    sentry_sdk.init(
+        dsn=dsn,
+        integrations=[DjangoIntegration()],
+        auto_session_tracking=False,
+        traces_sample_rate=0.1,
+        send_default_pii=True,
+        release=VERSION,
+    )

@@ -16,6 +16,7 @@ dependencies = [
     "redis>=6.4.0,<7",
     "gunicorn~=23.0.0",
     "mozilla-django-oidc~=4.0.1",
+    "sentry-sdk>=2.48.0",
 ]
 
 [tool.uv]
