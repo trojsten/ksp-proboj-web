@@ -12,7 +12,6 @@ from django.utils.timezone import make_aware
 from django.views import View
 from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, ListView, TemplateView
-from django.views.generic import DetailView, ListView, TemplateView
 
 from proboj.bots.models import Bot, BotVersion
 from proboj.games.leaderboard import get_leaderboard
