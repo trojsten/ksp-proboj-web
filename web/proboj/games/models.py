@@ -46,6 +46,7 @@ class Game(models.Model):
     bot_timeout = models.JSONField(default=dict)
     auto_play = models.IntegerField(default=0)
     max_bots = models.IntegerField(default=0)
+    archived = models.BooleanField(default=False)
 
     rules = models.TextField(blank=True)
 

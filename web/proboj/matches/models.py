@@ -10,7 +10,7 @@ from django.urls import reverse
 
 def _match_path(match: "Match", path: str, filename: str):
     _, ext = os.path.splitext(filename)
-    return f"matches/{match.pk}/{path}{ext}"
+    return f"matches/{match.game_id}/{match.pk}/{path}{ext}"
 
 
 def _match_server_log(instance: "Match", filename: str):
